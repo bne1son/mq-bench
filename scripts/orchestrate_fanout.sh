@@ -943,14 +943,19 @@ main() {
     fi
   done
 
+  local latex_plots_dir="${PLOTS_DIR}/latex"
   log "Plotting results to ${PLOTS_DIR}"
   if [[ "${DRY_RUN}" = 1 ]]; then
-    echo "+ python3 scripts/plot_results.py --summary ${SUMMARY_CSV} --out-dir ${PLOTS_DIR}"
+    echo "+ python3 ${SCRIPT_DIR}/plot_results.py --summary ${SUMMARY_CSV} --out-dir ${PLOTS_DIR} --fanout-core-plots-only"
+    echo "+ python3 ${SCRIPT_DIR}/plot_results.py --summary ${SUMMARY_CSV} --out-dir ${latex_plots_dir} --latex --fanout-core-plots-only"
   else
-    python3 "${SCRIPT_DIR}/plot_results.py" --summary "${SUMMARY_CSV}" --out-dir "${PLOTS_DIR}"
+    python3 "${SCRIPT_DIR}/plot_results.py" --summary "${SUMMARY_CSV}" --out-dir "${PLOTS_DIR}" --fanout-core-plots-only
+    log "Plotting LaTeX-ready PDF results to ${latex_plots_dir}"
+    python3 "${SCRIPT_DIR}/plot_results.py" --summary "${SUMMARY_CSV}" --out-dir "${latex_plots_dir}" --latex --fanout-core-plots-only
   fi
 
   log "Done. Summary CSV: ${SUMMARY_CSV}"
+  log "Plots: ${PLOTS_DIR} | LaTeX plots: ${latex_plots_dir}"
 }
 
 main "$@"

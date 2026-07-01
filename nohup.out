@@ -35,3 +35,43 @@ Starting multi-topic publishers
 [status] PUB sent=455 itps=273.11 tps=227.70 conn=182,182,0/182 | SUB recv=0 itps=0.00 p99=0.00ms conn=0,500,0/500
 [status] PUB sent=819 itps=363.88 tps=273.13 conn=273,273,0/273 | SUB recv=0 itps=0.00 p99=0.00ms conn=0,500,0/500
 Stopping subscribers (1376359)
+Unknown arg:  
+Orchestrate Experiment 1: Fan-Out Under Steady Load.
+Research question:
+  How efficiently can a broker replicate messages to many subscribers under
+  either dynamically scaled or fixed publisher counts?
+Topology:
+  P publishers -> S subscribers
+  All publishers publish to the same topic
+  All subscribers subscribe to the same topic
+Publisher modes:
+  dynamic: P = max(MIN_PUBS, ceil(S / SUBS_PER_PUB))
+  fixed:   P = FIXED_PUBS
+  Default: dynamic with 1 publisher per 100 subscribers
+Offered load:
+  Publish throughput target  = P * RATE_PER_PUB
+  Delivery throughput target = P * RATE_PER_PUB * S
+Runner:
+  Uses scripts/run_fanout.sh for each combination.
+Output:
+  results/fanout_steady_load_<ts>/{raw_data,plots}/ with summary.csv.
+Usage examples:
+  # Default sweep: 500..5000 subscribers, 1 pub / 100 subs, 10 msg/s per pub
+  scripts/orchestrate_fanout_under_steady_load.sh
+  # Custom subscriber list and publish rate per publisher
+  scripts/orchestrate_fanout_under_steady_load.sh --subs-list "500 1000 2000" --rate-per-pub 20
+  # Fixed publisher mode
+  scripts/orchestrate_fanout_under_steady_load.sh --pub-mode fixed --fixed-pubs 1
+  # Remote host for all brokers
+  scripts/orchestrate_fanout_under_steady_load.sh --host 192.168.0.254
+  # Remote broker lifecycle via SSH, starting/stopping broker between runs
+  scripts/orchestrate_fanout_under_steady_load.sh --ssh-target ubuntu@192.168.0.254 --sequential
+  # Append results into a specific existing run directory
+  scripts/orchestrate_fanout_under_steady_load.sh --append-to results/fanout_steady_load_YYYYmmdd_HHMMSS --transports "nats"
+  # MQTT multi-broker support
+  scripts/orchestrate_fanout_under_steady_load.sh --transports "mqtt" \
+    --mqtt-brokers "mosquitto:127.0.0.1:1883 emqx:127.0.0.1:1884"
+Defaults
+Sequential / Remote execution
+MQTT brokers (name:host:port). Default to local compose ports.
+AMQP brokers (name:host:port). Default to local compose ports.

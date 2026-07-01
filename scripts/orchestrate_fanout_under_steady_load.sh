@@ -4,17 +4,18 @@ set -euo pipefail
 # Orchestrate Experiment 1: Fan-Out Under Steady Load.
 #
 # Research question:
-#   How efficiently can a broker replicate messages to many subscribers when
-#   publisher count scales slowly with subscriber count?
+#   How efficiently can a broker replicate messages to many subscribers under
+#   either dynamically scaled or fixed publisher counts?
 #
 # Topology:
 #   P publishers -> S subscribers
 #   All publishers publish to the same topic
 #   All subscribers subscribe to the same topic
 #
-# Scaling rule:
-#   P = max(MIN_PUBS, ceil(S / SUBS_PER_PUB))
-#   Default: 1 publisher per 100 subscribers
+# Publisher modes:
+#   dynamic: P = max(MIN_PUBS, ceil(S / SUBS_PER_PUB))
+#   fixed:   P = FIXED_PUBS
+#   Default: dynamic with 1 publisher per 100 subscribers
 #
 # Offered load:
 #   Publish throughput target  = P * RATE_PER_PUB
@@ -33,11 +34,17 @@ set -euo pipefail
 #   # Custom subscriber list and publish rate per publisher
 #   scripts/orchestrate_fanout_under_steady_load.sh --subs-list "500 1000 2000" --rate-per-pub 20
 #
+#   # Fixed publisher mode
+#   scripts/orchestrate_fanout_under_steady_load.sh --pub-mode fixed --fixed-pubs 1
+#
 #   # Remote host for all brokers
 #   scripts/orchestrate_fanout_under_steady_load.sh --host 192.168.0.254
 #
 #   # Remote broker lifecycle via SSH, starting/stopping broker between runs
 #   scripts/orchestrate_fanout_under_steady_load.sh --ssh-target ubuntu@192.168.0.254 --sequential
+#
+#   # Append results into a specific existing run directory
+#   scripts/orchestrate_fanout_under_steady_load.sh --append-to results/fanout_steady_load_YYYYmmdd_HHMMSS --transports "nats"
 #
 #   # MQTT multi-broker support
 #   scripts/orchestrate_fanout_under_steady_load.sh --transports "mqtt" \
@@ -50,8 +57,10 @@ source "${SCRIPT_DIR}/lib.sh"
 
 # Defaults
 SUBS_LIST=(500 1000 2000 3000 4000 5000 6000 7000)
+PUB_MODE="dynamic"
 SUBS_PER_PUB=100
 MIN_PUBS=1
+FIXED_PUBS=1
 RATE_PER_PUB=10
 PAYLOAD_TOKEN="1024"
 DURATION=30
@@ -75,6 +84,7 @@ SEQUENTIAL=0
 SSH_TARGET=""
 REMOTE_DIR="~/mq-bench"
 APPEND_LATEST=0
+APPEND_TO_DIR=""
 
 # MQTT brokers (name:host:port). Default to local compose ports.
 MQTT_BROKERS="mosquitto:127.0.0.1:1883 emqx:127.0.0.1:1884 hivemq:127.0.0.1:1885 rabbitmq:127.0.0.1:1886 artemis:127.0.0.1:1887"
@@ -118,6 +128,14 @@ PLOTS_DIR=""
 SUMMARY_CSV=""
 
 init_dirs() {
+  if [[ -n "${APPEND_TO_DIR}" ]]; then
+    case "${APPEND_TO_DIR}" in
+      /*) BENCH_DIR="${APPEND_TO_DIR}" ;;
+      *) BENCH_DIR="${REPO_ROOT}/${APPEND_TO_DIR}" ;;
+    esac
+    APPEND_LATEST=1
+  fi
+
   if [[ ${APPEND_LATEST} -eq 1 ]] && [[ -z "${SUMMARY_OVERRIDE}" ]] && [[ -z "${BENCH_DIR}" ]]; then
     local latest_dir
     latest_dir=$(ls -1d "${REPO_ROOT}/results/fanout_steady_load_"* 2>/dev/null | sort -r | head -1 || true)
@@ -170,6 +188,10 @@ while [[ $# -gt 0 ]]; do
       shift
       IFS=' ' read -r -a SUBS_LIST <<<"${1:-}"
       ;;
+    --pub-mode)
+      shift
+      PUB_MODE=${1:-dynamic}
+      ;;
     --subs-per-pub)
       shift
       SUBS_PER_PUB=${1:-100}
@@ -177,6 +199,10 @@ while [[ $# -gt 0 ]]; do
     --min-pubs)
       shift
       MIN_PUBS=${1:-1}
+      ;;
+    --fixed-pubs)
+      shift
+      FIXED_PUBS=${1:-1}
       ;;
     --rate-per-pub)
       shift
@@ -278,6 +304,10 @@ while [[ $# -gt 0 ]]; do
     --append-latest)
       APPEND_LATEST=1
       ;;
+    --append-to)
+      shift
+      APPEND_TO_DIR=${1:-}
+      ;;
     -h|--help)
       usage
       exit 0
@@ -310,12 +340,20 @@ if [[ ! "${PAYLOAD_BYTES}" =~ ^[0-9]+$ ]]; then
   exit 2
 fi
 
+if [[ "${PUB_MODE}" != "dynamic" && "${PUB_MODE}" != "fixed" ]]; then
+  echo "[error] Invalid --pub-mode: ${PUB_MODE} (expected dynamic or fixed)" >&2
+  exit 2
+fi
 if [[ ! "${SUBS_PER_PUB}" =~ ^[0-9]+$ ]] || (( SUBS_PER_PUB <= 0 )); then
   echo "[error] Invalid --subs-per-pub: ${SUBS_PER_PUB}" >&2
   exit 2
 fi
 if [[ ! "${MIN_PUBS}" =~ ^[0-9]+$ ]] || (( MIN_PUBS <= 0 )); then
   echo "[error] Invalid --min-pubs: ${MIN_PUBS}" >&2
+  exit 2
+fi
+if [[ ! "${FIXED_PUBS}" =~ ^[0-9]+$ ]] || (( FIXED_PUBS <= 0 )); then
+  echo "[error] Invalid --fixed-pubs: ${FIXED_PUBS}" >&2
   exit 2
 fi
 if [[ ! "${RATE_PER_PUB}" =~ ^[0-9]+$ ]] || (( RATE_PER_PUB <= 0 )); then
@@ -404,6 +442,11 @@ fi
 
 calc_pubs_for_subs() {
   local subs="$1"
+  if [[ "${PUB_MODE}" == "fixed" ]]; then
+    echo "${FIXED_PUBS}"
+    return 0
+  fi
+
   local pubs=$(( (subs + SUBS_PER_PUB - 1) / SUBS_PER_PUB ))
   if (( pubs < MIN_PUBS )); then pubs="${MIN_PUBS}"; fi
   echo "${pubs}"
@@ -1081,7 +1124,11 @@ main() {
   log "Resolved: SUMMARY_CSV=${SUMMARY_CSV} | PLOTS_DIR=${PLOTS_DIR} | RAW_DIR=${RAW_DIR}"
   log "Resolved payload (bytes): ${payload_bytes}"
   log "Subscriber sweep: ${SUBS_LIST[*]}"
-  log "Publisher rule: pubs=max(${MIN_PUBS}, ceil(subs/${SUBS_PER_PUB})) | rate_per_pub=${RATE_PER_PUB}/s"
+  if [[ "${PUB_MODE}" == "fixed" ]]; then
+    log "Publisher mode: fixed | pubs=${FIXED_PUBS} | rate_per_pub=${RATE_PER_PUB}/s"
+  else
+    log "Publisher mode: dynamic | pubs=max(${MIN_PUBS}, ceil(subs/${SUBS_PER_PUB})) | rate_per_pub=${RATE_PER_PUB}/s"
+  fi
 
   for t in "${TRANSPORTS[@]}"; do
     if [[ "${t}" == "mqtt" ]]; then
@@ -1209,14 +1256,19 @@ main() {
     fi
   done
 
+  local latex_plots_dir="${PLOTS_DIR}/latex"
   log "Plotting results to ${PLOTS_DIR}"
   if [[ "${DRY_RUN}" = 1 ]]; then
-    echo "+ python3 ${SCRIPT_DIR}/plot_results.py --summary ${SUMMARY_CSV} --out-dir ${PLOTS_DIR}"
+    echo "+ python3 ${SCRIPT_DIR}/plot_results.py --summary ${SUMMARY_CSV} --out-dir ${PLOTS_DIR} --fanout-core-plots-only"
+    echo "+ python3 ${SCRIPT_DIR}/plot_results.py --summary ${SUMMARY_CSV} --out-dir ${latex_plots_dir} --latex --fanout-core-plots-only"
   else
-    python3 "${SCRIPT_DIR}/plot_results.py" --summary "${SUMMARY_CSV}" --out-dir "${PLOTS_DIR}"
+    python3 "${SCRIPT_DIR}/plot_results.py" --summary "${SUMMARY_CSV}" --out-dir "${PLOTS_DIR}" --fanout-core-plots-only
+    log "Plotting LaTeX-ready PDF results to ${latex_plots_dir}"
+    python3 "${SCRIPT_DIR}/plot_results.py" --summary "${SUMMARY_CSV}" --out-dir "${latex_plots_dir}" --latex --fanout-core-plots-only
   fi
 
   log "Done. Summary CSV: ${SUMMARY_CSV}"
+  log "Plots: ${PLOTS_DIR} | LaTeX plots: ${latex_plots_dir}"
 }
 
 main "$@"

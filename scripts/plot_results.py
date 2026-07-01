@@ -37,6 +37,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--out-dir", help="Output directory for plots (default: 'plots' subdirectory in summary's folder)")
     p.add_argument("--only-latency-vs-payload", action="store_true", help="Only generate Latency vs Payload plots")
     p.add_argument("--only-variable-axis-plots", action="store_true", help="Only generate plots where the x-axis is the varying subscriber/publisher count")
+    p.add_argument("--fanout-core-plots-only", action="store_true", help="For fanout runs, generate only delivery throughput, avg CPU cores used, and avg memory used (GB) plots")
     p.add_argument("--latex", action="store_true", help="Generate plots optimized for LaTeX double-column papers (smaller size, larger fonts, PDF output)")
     p.add_argument("--legend", action="store_true", help="Include legend in each plot (omitted by default)")
     p.add_argument(
@@ -218,6 +219,26 @@ def load_records(csv_path: str):
 
 def unique_sorted(seq):
     return sorted(set(seq))
+
+
+def detect_fanout_core_summary(records: list, summary_path: str) -> bool:
+    """Detect fanout summaries that should default to the reduced plot set.
+
+    These summaries typically sweep subscriber count and use run_ids like
+    ``fanout_steady_*``. For those cases we only want the core three plots:
+    delivery throughput, average CPU cores used, and average memory used (GB).
+    """
+    if not records:
+        return False
+
+    subs_values = {r.get("subs") for r in records if r.get("subs") is not None}
+    if len(subs_values) <= 1:
+        return False
+
+    run_ids = [str(r.get("run_id", "")).lower() for r in records if r.get("run_id")]
+    summary_hint = "fanout" in os.path.abspath(summary_path).lower()
+    run_id_hint = bool(run_ids) and all(rid.startswith("fanout") for rid in run_ids)
+    return summary_hint or run_id_hint
 
 
 def dedupe_by_pairs(records_list: list) -> list:
@@ -407,46 +428,10 @@ def format_pairs_axis(ax, data_xs: list, use_thousands: bool = True) -> None:
 
 
 def format_throughput_axis(ax, rate=None) -> None:
-    """Auto-scale throughput Y-axis.
-
-    When `rate` (per-publisher msg/s) is provided the divisor is rate*1000,
-    so tick labels read as multiples of 1000× the configured rate — i.e. the
-    Y-axis directly shows how many subscriber-thousands were served at the
-    configured production rate.  When rate is None the divisor is inferred
-    from the plotted data (largest power-of-1000 where max/divisor >= 1).
-    """
-    import math
+    """Format throughput Y-axis using a fixed 10^5 msg/s scale."""
     from matplotlib.ticker import FuncFormatter
 
-    if rate is not None and rate > 0:
-        divisor = rate * 1000
-    else:
-        # Determine max y value from all plotted lines
-        max_val = 0.0
-        for line in ax.get_lines():
-            yd = line.get_ydata()
-            if len(yd):
-                m = max(
-                    (float(y) for y in yd if y == y and not math.isinf(float(y))),
-                    default=0.0,
-                )
-                if m > max_val:
-                    max_val = m
-        if max_val <= 0:
-            max_val = 1000.0  # safe fallback
-        # Largest power-of-1000 ≤ max_val (minimum 1000)
-        exp3 = max(3, int(math.log10(max_val) / 3) * 3)
-        divisor = 10 ** exp3
-
-    # Build human-readable annotation
-    if divisor == 1_000:
-        annotation = "×1,000 msg/s"
-    elif divisor == 1_000_000:
-        annotation = "×10⁶ msg/s"
-    elif divisor == 1_000_000_000:
-        annotation = "×10⁹ msg/s"
-    else:
-        annotation = f"×{divisor:,} msg/s"
+    divisor = 100_000
 
     def _fmt(x, pos):
         if x <= 0:
@@ -455,7 +440,7 @@ def format_throughput_axis(ax, rate=None) -> None:
         return f"{int(val)}" if val == int(val) else f"{val:.1f}"
 
     ax.yaxis.set_major_formatter(FuncFormatter(_fmt))
-    ax.set_ylabel(f"Throughput\n({annotation})")
+    ax.set_ylabel("Throughput\n(x10^5 msg/s)")
 
 
 def format_memory_mb_axis(ax) -> None:
@@ -518,6 +503,29 @@ def format_bandwidth_axis(ax) -> None:
     # Network labels are longer than the other metric labels, so trim their
     # font size slightly to keep them inside the figure bounds.
     ax.yaxis.label.set_size(max(ax.yaxis.label.get_size() * 0.82, 8))
+
+
+def _collect_saved_variants(filename: str) -> set[str]:
+    """Return the generated filename plus any LaTeX sidecar variant."""
+    names = {filename}
+    if filename.endswith('.pdf'):
+        names.add(filename[:-4] + '.png')
+    return names
+
+
+def cleanup_obsolete_fanout_core_outputs(out_dir: str, keep_files: set[str]) -> None:
+    """Remove older plot artifacts so the output directory reflects the current fanout-core run."""
+    for entry in os.listdir(out_dir):
+        path = os.path.join(out_dir, entry)
+        if not os.path.isfile(path):
+            continue
+        if entry in keep_files:
+            continue
+        if entry == 'README.md' or entry.endswith(('.pdf', '.png')):
+            try:
+                os.remove(path)
+            except OSError:
+                pass
 
 
 def generate_standalone_legend(transports: list, out_dir: str, marker_size: float = 12) -> str:
@@ -628,6 +636,10 @@ def main() -> int:
 
     payloads = unique_sorted(r["payload"] for r in records)
     transports = unique_sorted(r["transport"] for r in records)
+    detected_fanout_core = detect_fanout_core_summary(records, args.summary)
+    fanout_core_only = args.fanout_core_plots_only or detected_fanout_core
+    if detected_fanout_core and not args.fanout_core_plots_only:
+        print("[plot] Fanout summary detected; generating only throughput, avg CPU cores, and avg memory (GB) plots")
 
     # Detect latency-only input (no finite sub_tps anywhere)
     latency_only = all(not math.isfinite(rec.get("sub_tps", float("nan"))) for rec in records)
@@ -667,7 +679,7 @@ def main() -> int:
     mem_vs_payload_imgs = {}  # rate -> filename
 
     # Throughput vs offered rate (skip if latency-only)
-    if not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
+    if not fanout_core_only and not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
         for payload in payloads:
             fig, ax = plt.subplots(figsize=figsize)
             for t in transports:
@@ -700,7 +712,7 @@ def main() -> int:
     # Throughput vs Pairs (when run_id includes n<N>)
     # Only meaningful for non-latency-only inputs
     # Generate both log-scale and linear-scale versions
-    if not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
+    if not fanout_core_only and not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
         # Group by payload and transport, aggregate by pairs
         by_pt = defaultdict(list)
         for r in records:
@@ -785,7 +797,7 @@ def main() -> int:
     # Latency vs Pairs (when run_id includes n<N>)
     # Generate for any dataset type (latency-only or full), using p50/p95/p99
     # Group by payload and transport, aggregate by pairs
-    if not args.only_latency_vs_payload and not args.only_variable_axis_plots:
+    if not fanout_core_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
         by_pt_lat_pairs = defaultdict(list)
         for r in records:
             if r.get("pairs") is None:
@@ -862,7 +874,7 @@ def main() -> int:
             plt.close(fig)
         return out
 
-    if by_pt_lat_pairs:
+    if by_pt_lat_pairs and not fanout_core_only:
         latency_pairs_imgs_p50 = plot_latency_pairs("p50_ms", "P50 latency")
         latency_pairs_imgs_p95 = plot_latency_pairs("p95_ms", "P95 latency")
         latency_pairs_imgs_p99 = plot_latency_pairs("p99_ms", "P99 latency")
@@ -930,7 +942,7 @@ def main() -> int:
             plt.close(fig)
         return out
 
-    if by_pt_lat_pairs:
+    if by_pt_lat_pairs and not fanout_core_only:
         cpu_pairs_imgs = plot_metric_vs_pairs("max_cpu", "Max CPU%", "Max CPU (%)", skip_legend_in_latex=True)
         mem_pairs_imgs = plot_metric_vs_pairs("max_mem_perc", "Max Memory%", "Max Memory (%)", skip_legend_in_latex=True)
         avg_cpu_pairs_imgs = plot_metric_vs_pairs("avg_cpu", "Avg CPU%", "Avg CPU (%)", skip_legend_in_latex=True)
@@ -940,7 +952,7 @@ def main() -> int:
         max_mem_mb_pairs_imgs = plot_metric_vs_pairs("max_mem_mb", "Max Memory", "Max Memory (GB)", y_formatter=format_memory_mb_axis, skip_legend_in_latex=True)
 
     # P99 vs offered rate (skip if latency-only; it's rate-based summary)
-    if not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
+    if not fanout_core_only and not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
         for payload in payloads:
             fig, ax = plt.subplots(figsize=figsize)
             for t in transports:
@@ -976,7 +988,7 @@ def main() -> int:
             plt.close(fig)
 
     # Max CPU% vs offered rate (skip if latency-only)
-    if not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
+    if not fanout_core_only and not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
         for payload in payloads:
             fig, ax = plt.subplots(figsize=figsize)
             for t in transports:
@@ -1006,7 +1018,7 @@ def main() -> int:
             plt.close(fig)
 
     # Max Memory% vs offered rate (skip if latency-only)
-    if not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
+    if not fanout_core_only and not latency_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
         for payload in payloads:
             fig, ax = plt.subplots(figsize=figsize)
             for t in transports:
@@ -1122,7 +1134,7 @@ def main() -> int:
         return out
 
     # Use the appropriate dataset for latency vs payload
-    if not args.only_variable_axis_plots:
+    if not fanout_core_only and not args.only_variable_axis_plots:
         latency_dataset = rate_records
         # Generate p50/p95/p99 vs payload (per rate)
         p50_vs_payload_imgs = plot_metric_vs_payload("p50_ms", "P50 latency", "P50 latency (ms)", latency_dataset, log_y=True)
@@ -1174,7 +1186,7 @@ def main() -> int:
             subs_payloads = unique_sorted(r["payload"] for r in records if r.get(axis_key) is not None)
             subs_transports = unique_sorted(r["transport"] for r in records if r.get(axis_key) is not None)
 
-            # Throughput vs variable count (log + linear)
+            # Throughput vs variable count
             for pl in subs_payloads:
                 plot_data_subs = {}
                 all_xs_subs = []
@@ -1202,31 +1214,32 @@ def main() -> int:
 
                 _subs_rate = next(iter(subs_rates)) if len(subs_rates) == 1 else None
 
-                # Log scale
-                fig, ax = plt.subplots(figsize=figsize)
-                for t, (xs, ys) in plot_data_subs.items():
-                    mk, ls, lw, clr = style_for(t)
-                    ax.plot(xs, ys, marker=mk, linestyle=ls, linewidth=lw, color=clr, markersize=marker_size, label=t)
-                if not args.latex:
-                    ax.set_title(f"Throughput vs {variable_axis_label} (payload={pl}B)")
-                ax.set_xlabel(axis_xlabel)
-                ax.set_xscale("log")
-                format_pairs_axis(ax, all_xs_subs)
-                format_throughput_axis(ax, rate=_subs_rate)
-                if not args.latex:
-                    ax.grid(True, alpha=0.4, linestyle="--")
-                add_plot_legend(
-                    ax,
-                    fig,
-                    args,
-                    default_mode="inside",
-                    inline_fontsize="small",
-                    inline_col1_size=5,
-                )
-                fn = os.path.join(args.out_dir, f"throughput_vs_{variable_axis_slug}_payload{pl}_log{plot_ext}")
-                save_fig(fig, fn)
-                throughput_subs_imgs[pl] = os.path.basename(fn)
-                plt.close(fig)
+                if not fanout_core_only:
+                    # Log scale
+                    fig, ax = plt.subplots(figsize=figsize)
+                    for t, (xs, ys) in plot_data_subs.items():
+                        mk, ls, lw, clr = style_for(t)
+                        ax.plot(xs, ys, marker=mk, linestyle=ls, linewidth=lw, color=clr, markersize=marker_size, label=t)
+                    if not args.latex:
+                        ax.set_title(f"Throughput vs {variable_axis_label} (payload={pl}B)")
+                    ax.set_xlabel(axis_xlabel)
+                    ax.set_xscale("log")
+                    format_pairs_axis(ax, all_xs_subs)
+                    format_throughput_axis(ax, rate=_subs_rate)
+                    if not args.latex:
+                        ax.grid(True, alpha=0.4, linestyle="--")
+                    add_plot_legend(
+                        ax,
+                        fig,
+                        args,
+                        default_mode="inside",
+                        inline_fontsize="small",
+                        inline_col1_size=5,
+                    )
+                    fn = os.path.join(args.out_dir, f"throughput_vs_{variable_axis_slug}_payload{pl}_log{plot_ext}")
+                    save_fig(fig, fn)
+                    throughput_subs_imgs[pl] = os.path.basename(fn)
+                    plt.close(fig)
 
                 # Linear scale
                 fig, ax = plt.subplots(figsize=figsize)
@@ -1303,23 +1316,25 @@ def main() -> int:
                     plt.close(fig)
                 return out
 
-            latency_subs_imgs_p50 = _plot_subs_scalar("p50_ms", "P50 latency", "P50 latency (ms)", log_y=True)
-            latency_subs_imgs_p95 = _plot_subs_scalar("p95_ms", "P95 latency", "P95 latency (ms)", log_y=True)
-            latency_subs_imgs_p99 = _plot_subs_scalar("p99_ms", "P99 latency", "P99 latency (ms)", log_y=True)
-            cpu_subs_imgs = _plot_subs_scalar("max_cpu", "Max CPU%", "Max CPU (%)")
-            mem_subs_imgs = _plot_subs_scalar("max_mem_perc", "Max Memory%", "Max Memory (%)")
-            avg_cpu_subs_imgs = _plot_subs_scalar("avg_cpu", "Avg CPU%", "Avg CPU (%)")
-            avg_mem_subs_imgs = _plot_subs_scalar("avg_mem_perc", "Avg Memory%", "Avg Memory (%)")
+            if not fanout_core_only:
+                latency_subs_imgs_p50 = _plot_subs_scalar("p50_ms", "P50 latency", "P50 latency (ms)", log_y=True)
+                latency_subs_imgs_p95 = _plot_subs_scalar("p95_ms", "P95 latency", "P95 latency (ms)", log_y=True)
+                latency_subs_imgs_p99 = _plot_subs_scalar("p99_ms", "P99 latency", "P99 latency (ms)", log_y=True)
+                cpu_subs_imgs = _plot_subs_scalar("max_cpu", "Max CPU%", "Max CPU (%)")
+                mem_subs_imgs = _plot_subs_scalar("max_mem_perc", "Max Memory%", "Max Memory (%)")
+                avg_cpu_subs_imgs = _plot_subs_scalar("avg_cpu", "Avg CPU%", "Avg CPU (%)")
+                avg_mem_subs_imgs = _plot_subs_scalar("avg_mem_perc", "Avg Memory%", "Avg Memory (%)")
             avg_cpu_cores_subs_imgs = _plot_subs_scalar("avg_cpu_cores", "Avg CPU Cores Used", "Avg CPU Cores Used")
             avg_mem_mb_subs_imgs = _plot_subs_scalar("avg_mem_mb", "Avg Memory", "Avg Memory (GB)", y_formatter=format_memory_mb_axis)
-            max_net_rx_subs_imgs = _plot_subs_scalar("max_net_rx_bps", "Peak Receive Bandwidth", "Peak Receive Bandwidth", y_formatter=format_bandwidth_axis)
-            max_net_tx_subs_imgs = _plot_subs_scalar("max_net_tx_bps", "Peak Transmit Bandwidth", "Peak Transmit Bandwidth", y_formatter=format_bandwidth_axis)
-            avg_net_rx_subs_imgs = _plot_subs_scalar("avg_net_rx_bps", "Average Receive Bandwidth", "Average Receive Bandwidth", y_formatter=format_bandwidth_axis)
-            avg_net_tx_subs_imgs = _plot_subs_scalar("avg_net_tx_bps", "Average Transmit Bandwidth", "Average Transmit Bandwidth", y_formatter=format_bandwidth_axis)
+            if not fanout_core_only:
+                max_net_rx_subs_imgs = _plot_subs_scalar("max_net_rx_bps", "Peak Receive Bandwidth", "Peak Receive Bandwidth", y_formatter=format_bandwidth_axis)
+                max_net_tx_subs_imgs = _plot_subs_scalar("max_net_tx_bps", "Peak Transmit Bandwidth", "Peak Transmit Bandwidth", y_formatter=format_bandwidth_axis)
+                avg_net_rx_subs_imgs = _plot_subs_scalar("avg_net_rx_bps", "Average Receive Bandwidth", "Average Receive Bandwidth", y_formatter=format_bandwidth_axis)
+                avg_net_tx_subs_imgs = _plot_subs_scalar("avg_net_tx_bps", "Average Transmit Bandwidth", "Average Transmit Bandwidth", y_formatter=format_bandwidth_axis)
 
     # Fanout plots: x = subscriber count, y = delivered throughput, per (payload, rate)
     fanout_rows = []
-    if not args.only_latency_vs_payload and not args.only_variable_axis_plots:
+    if not fanout_core_only and not args.only_latency_vs_payload and not args.only_variable_axis_plots:
         subs_pat = re.compile(r"-s(\d+)$")
         for r in records:
             t = r["transport"]
@@ -1942,6 +1957,15 @@ def main() -> int:
                             continue
                         f.write(f"#### rate={r}/s\n\n")
                         f.write(f"![fanout mem p{p} r{r}]({img})\n\n")
+
+        if fanout_core_only:
+            keep_files = {'README.md'}
+            if legend_file:
+                keep_files.update(_collect_saved_variants(legend_file))
+            for img_map in (throughput_subs_imgs_linear, avg_cpu_cores_subs_imgs, avg_mem_mb_subs_imgs):
+                for filename in img_map.values():
+                    keep_files.update(_collect_saved_variants(filename))
+            cleanup_obsolete_fanout_core_outputs(args.out_dir, keep_files)
 
         print("[plot] Wrote plots to", args.out_dir)
         print("[plot] Wrote gallery:", md_path)

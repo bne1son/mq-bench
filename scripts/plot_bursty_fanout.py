@@ -33,13 +33,14 @@ PLOT_LEGEND_COLUMN_SPACING = 0.45
 PLOT_LEGEND_HANDLE_TEXT_PAD = 0.25
 PLOT_X_LABEL_FONTSIZE = 8.0
 PLOT_Y_LABEL_FONTSIZE = 8.0
-PHASE_LABEL_FONTSIZE = 10.4
-PHASE_LABEL_FONTSIZE_LATEX = 9.0
-PHASE_HEADER_FONTSIZE = 10.0
-PHASE_HEADER_FONTSIZE_LATEX = 12.0
+PHASE_LABEL_FONTSIZE = 11.4
+PHASE_LABEL_FONTSIZE_LATEX = 10.2
+PHASE_HEADER_FONTSIZE = 11.2
+PHASE_HEADER_FONTSIZE_LATEX = 13.0
 PHASE_LABEL_Y = 1.055
 PHASE_RATE_Y = 1.025
 PHASE_HEADER_Y = 1.106
+PHASE_TEXT_ROTATION = 0.0
 
 
 def parse_args() -> argparse.Namespace:
@@ -149,6 +150,11 @@ def parse_args() -> argparse.Namespace:
         "--throughput-phase-panels",
         action="store_true",
         help="Render delivery throughput as two side-by-side phase-range panels (Baseline-B6 and B7-B11)",
+    )
+    p.add_argument(
+        "--resource-target-overlay",
+        action="store_true",
+        help="Overlay a normalized fan-out target dashed line on CPU and memory time-series plots",
     )
     p.add_argument(
         "--start-phase",
@@ -895,7 +901,7 @@ def phases_with_compact_labels(phases):
             item["compact_label"] = f"B{burst_index}"
             item["burst_level"] = item["rate_label"]
         elif not baseline_labeled and name == "baseline":
-            item["compact_label"] = "Baseline"
+            item["compact_label"] = "BL"
             baseline_labeled = True
         elif name == "recovery":
             recovery_index += 1
@@ -905,7 +911,7 @@ def phases_with_compact_labels(phases):
         for item in labeled:
             name = (item.get("name") or "").strip().lower()
             if name not in ("warmup", "recovery") and not is_burst_phase(name):
-                item["compact_label"] = "Baseline"
+                item["compact_label"] = "BL"
                 break
     return labeled
 
@@ -935,7 +941,7 @@ def compact_phase_label_items(phases):
             items.append((mid, label))
             rate_items.append((mid, rate_label))
         elif not baseline_labeled and name == "baseline":
-            items.append((mid, "Baseline"))
+            items.append((mid, "BL"))
             rate_items.append((mid, rate_label))
             baseline_labeled = True
         elif name == "recovery":
@@ -947,7 +953,7 @@ def compact_phase_label_items(phases):
             name = (phase.get("name") or "").strip().lower()
             if name not in ("warmup", "recovery") and not is_burst_phase(name):
                 mid = (phase["start"] + phase["end"]) / 2.0
-                items.insert(0, (mid, "Baseline"))
+                items.insert(0, (mid, "BL"))
                 rate_items.insert(0, (mid, phase.get("rate_label", fmt_compact_rate(phase.get("rate")))))
                 break
     return items, rate_items
@@ -1076,6 +1082,7 @@ def add_phase_lines(ax, phases, latex=False, show_boundaries=True, compact_label
             ha="center",
             va="bottom",
             fontsize=PHASE_HEADER_FONTSIZE_LATEX if latex else PHASE_HEADER_FONTSIZE,
+            fontweight="bold",
             color=ax.xaxis.label.get_color(),
             clip_on=False,
         )
@@ -1088,6 +1095,9 @@ def add_phase_lines(ax, phases, latex=False, show_boundaries=True, compact_label
             ha="center",
             va="bottom",
             fontsize=label_fontsize,
+            fontweight="bold",
+            rotation=PHASE_TEXT_ROTATION if compact_labels else 0.0,
+            rotation_mode="anchor",
             color=ax.xaxis.label.get_color(),
             bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.72, "pad": 1.0},
             clip_on=False,
@@ -1103,6 +1113,9 @@ def add_phase_lines(ax, phases, latex=False, show_boundaries=True, compact_label
                 ha="center",
                 va="bottom",
                 fontsize=label_fontsize,
+                fontweight="bold",
+                rotation=PHASE_TEXT_ROTATION,
+                rotation_mode="anchor",
                 color=ax.xaxis.label.get_color(),
                 bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.72, "pad": 1.0},
                 clip_on=False,
@@ -1375,7 +1388,7 @@ def save_broken_y_line_plot(out_dir, filename, ylabel, series, phases, ext, dpi,
             color="#333333",
         )
 
-    top = 0.84 if compact_phase_labels else 0.92
+    top = 0.79 if compact_phase_labels else 0.92
     bottom = 0.16 if caption else 0.11
     fig.subplots_adjust(left=0.11, right=0.985, top=top, bottom=bottom, hspace=0.05)
     gallery_file = save_fig(fig, out_dir, filename, ext, dpi)
@@ -1505,7 +1518,7 @@ def save_throughput_phase_panel_plot(out_dir, filename, ylabel, series, phases, 
     fig, axes = plt.subplots(1, 2, figsize=LATEX_FIGSIZE if latex else (12.5, 4.8), gridspec_kw={"wspace": 0.08})
     target_linewidth = 1.15
     target_alpha = 0.62
-    top = 0.82 if compact_phase_labels else 0.89
+    top = 0.77 if compact_phase_labels else 0.89
     bottom = 0.16 if caption else 0.12
     panel_header_y = top + ((PHASE_HEADER_Y - PHASE_LABEL_Y) * (top - bottom))
     for ax, panel in zip(axes, panel_windows):
@@ -1550,7 +1563,8 @@ def save_throughput_phase_panel_plot(out_dir, filename, ylabel, series, phases, 
         ha="center",
         va="bottom",
         fontsize=PHASE_HEADER_FONTSIZE_LATEX if latex else PHASE_HEADER_FONTSIZE,
-        color=axes[0].xaxis.label.get_color(),
+        fontweight="bold",
+        color=ax.xaxis.label.get_color(),
     )
     fig.text(
         0.03,
@@ -2511,6 +2525,8 @@ def main() -> int:
     mem = rolling_average_series(mem, resource_window)
     rx = rolling_average_series(rx, resource_window)
     tx = rolling_average_series(tx, resource_window)
+    cpu_target = normalized_target_overlay(target_throughput, cpu) if args.resource_target_overlay else {}
+    mem_target = normalized_target_overlay(target_throughput, mem) if args.resource_target_overlay else {}
 
     latency_probe = representative_series(p99, p95, p50, avg_latency)
     resource_probe = representative_series(tx, rx, cpu, mem)
@@ -2535,8 +2551,8 @@ def main() -> int:
     images.append(("P95 Latency vs Time", save_line_plot(args.out_dir, "p95_latency_vs_time.png", "P95 Latency vs Time", "P95 latency (ms)", p95, visible_phases, plot_ext, plot_dpi, inline_legend, log_y=True, marker_every=latency_marker_every, compact_phase_labels=True, failure_markers=failures)))
     images.append(("P50 Latency vs Time", save_line_plot(args.out_dir, "p50_latency_vs_time.png", "P50 Latency vs Time", "P50 latency (ms)", p50, visible_phases, plot_ext, plot_dpi, inline_legend, log_y=True, marker_every=latency_marker_every, compact_phase_labels=True, failure_markers=failures)))
     images.append(("Average Latency vs Time", save_line_plot(args.out_dir, "avg_latency_vs_time.png", "Average Latency vs Time", "Average latency (ms)", avg_latency, visible_phases, plot_ext, plot_dpi, inline_legend, log_y=True, marker_every=latency_marker_every, compact_phase_labels=True, failure_markers=failures)))
-    images.append(("CPU vs Time", save_line_plot(args.out_dir, "cpu_vs_time.png", "CPU Utilization vs Time", "CPU Core Used", cpu, relabel_baseline_compact(visible_phases, "BL"), plot_ext, plot_dpi, inline_legend, marker_every=resource_marker_every, compact_phase_labels=True, failure_markers=failures, y_bottom_padding=0.04)))
-    images.append(("Memory vs Time", save_line_plot(args.out_dir, "memory_vs_time.png", "Memory Utilization vs Time", "Memory (GB)", mem, relabel_baseline_compact(visible_phases, "BL"), plot_ext, plot_dpi, inline_legend, marker_every=resource_marker_every, step=True, y_min=0.0, compact_phase_labels=True, failure_markers=failures, y_bottom_padding=0.04)))
+    images.append(("CPU vs Time", save_line_plot(args.out_dir, "cpu_vs_time.png", "CPU Utilization vs Time", "CPU Core Used", cpu, relabel_baseline_compact(visible_phases, "BL"), plot_ext, plot_dpi, inline_legend, marker_every=resource_marker_every, compact_phase_labels=True, failure_markers=failures, y_bottom_padding=0.04, target_series=cpu_target)))
+    images.append(("Memory vs Time", save_line_plot(args.out_dir, "memory_vs_time.png", "Memory Utilization vs Time", "Memory (GB)", mem, relabel_baseline_compact(visible_phases, "BL"), plot_ext, plot_dpi, inline_legend, marker_every=resource_marker_every, step=True, y_min=0.0, compact_phase_labels=True, failure_markers=failures, y_bottom_padding=0.04, target_series=mem_target)))
     images.append(("Network TX vs Time", save_line_plot(args.out_dir, "network_tx_vs_time.png", "Network TX vs Time", "Network bandwidth (Gbps)", tx, visible_phases, plot_ext, plot_dpi, inline_legend, y_scale=1_000_000_000.0, marker_every=resource_marker_every, compact_phase_labels=True, failure_markers=failures)))
     images.append(("Latency Quartile Boxplot by Phase", save_latency_whisker_plot(args.out_dir, "phase_latency_whisker.png", "Latency Quartile Boxplot by Phase", rows, plot_ext, plot_dpi, inline_legend, reference_phases=phases)))
     images.append(("Phase P99 Latency", save_phase_plot(args.out_dir, "phase_p99_latency.png", "P99 Latency by Phase", "P99 latency (ms)", rows, "p99_ms", plot_ext, plot_dpi, inline_legend, log_y=True, reference_phases=phases)))
