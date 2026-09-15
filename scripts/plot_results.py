@@ -124,6 +124,9 @@ LATEX_FONT_SIZE = 22
 LATEX_AXIS_LABEL_SIZE = 26
 LATEX_TITLE_SIZE = 28
 LATEX_LEGEND_SIZE = 26
+TARGET_LINE_COLOR = "#111827"
+TARGET_LINE_STYLE = (0, (8, 4))
+TARGET_LINE_WIDTH = 2.4
 
 
 def _norm_label(lbl: str) -> str:
@@ -160,6 +163,7 @@ def load_records(csv_path: str):
                     "payload": int(r["payload"]),
                     "rate": int(r["rate"]),
                     "sub_tps": float(r.get("sub_tps", "")) if r.get("sub_tps", "") else float("nan"),
+                    "delivery_rate": float(r.get("delivery_rate", "")) if r.get("delivery_rate", "") else float("nan"),
                     "p50_ms": float(r.get("p50_ms", "")) if r.get("p50_ms", "") else float("nan"),
                     "p95_ms": float(r.get("p95_ms", "")) if r.get("p95_ms", "") else float("nan"),
                     "p99_ms": float(r["p99_ms"]) if r["p99_ms"] else float("nan"),
@@ -1182,15 +1186,15 @@ def main() -> int:
                 continue
             by_pt_subs[(r["payload"], r["transport"])].append(r)
 
-        if by_pt_subs:
-            subs_payloads = unique_sorted(r["payload"] for r in records if r.get(axis_key) is not None)
-            subs_transports = unique_sorted(r["transport"] for r in records if r.get(axis_key) is not None)
+        subs_payloads = unique_sorted(r["payload"] for r in records if r.get(axis_key) is not None)
+        subs_transports = unique_sorted(r["transport"] for r in records if r.get(axis_key) is not None)
 
-            # Throughput vs variable count
+        if by_pt_subs:
             for pl in subs_payloads:
                 plot_data_subs = {}
                 all_xs_subs = []
                 subs_rates = set()
+                target_xy = []
                 for t in subs_transports:
                     lst = by_pt_subs.get((pl, t), [])
                     if not lst:
@@ -1208,11 +1212,18 @@ def main() -> int:
                             r0 = rec.get("rate")
                             if r0 and r0 > 0:
                                 subs_rates.add(r0)
+                        for rec in lst:
+                            axis_value = rec.get(axis_key)
+                            target_value = rec.get("delivery_rate")
+                            if axis_value is None or not math.isfinite(target_value):
+                                continue
+                            target_xy.append((axis_value, target_value))
 
                 if not plot_data_subs:
                     continue
 
                 _subs_rate = next(iter(subs_rates)) if len(subs_rates) == 1 else None
+                target_xy = sorted({(x, y) for x, y in target_xy}, key=lambda p: p[0])
 
                 if not fanout_core_only:
                     # Log scale
@@ -1220,6 +1231,15 @@ def main() -> int:
                     for t, (xs, ys) in plot_data_subs.items():
                         mk, ls, lw, clr = style_for(t)
                         ax.plot(xs, ys, marker=mk, linestyle=ls, linewidth=lw, color=clr, markersize=marker_size, label=t)
+                    if target_xy:
+                        ax.plot(
+                            [p[0] for p in target_xy],
+                            [p[1] for p in target_xy],
+                            linestyle=TARGET_LINE_STYLE,
+                            linewidth=TARGET_LINE_WIDTH,
+                            color=TARGET_LINE_COLOR,
+                            label="Target delivery throughput",
+                        )
                     if not args.latex:
                         ax.set_title(f"Throughput vs {variable_axis_label} (payload={pl}B)")
                     ax.set_xlabel(axis_xlabel)
@@ -1246,6 +1266,15 @@ def main() -> int:
                 for t, (xs, ys) in plot_data_subs.items():
                     mk, ls, lw, clr = style_for(t)
                     ax.plot(xs, ys, marker=mk, linestyle=ls, linewidth=lw, color=clr, markersize=marker_size, label=t)
+                if target_xy:
+                    ax.plot(
+                        [p[0] for p in target_xy],
+                        [p[1] for p in target_xy],
+                        linestyle=TARGET_LINE_STYLE,
+                        linewidth=TARGET_LINE_WIDTH,
+                        color=TARGET_LINE_COLOR,
+                        label="Target delivery throughput",
+                    )
                 if not args.latex:
                     ax.set_title(f"Throughput vs {variable_axis_label} (payload={pl}B)")
                 ax.set_xlabel(axis_xlabel)

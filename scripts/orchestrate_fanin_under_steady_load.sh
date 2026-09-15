@@ -31,6 +31,7 @@ set -euo pipefail
 #   scripts/orchestrate_fanin_under_steady_load.sh --host 192.168.0.254 --transports "redis nats"
 #   scripts/orchestrate_fanin_under_steady_load.sh --ssh-target ubuntu@192.168.0.254 --sequential --remote-dir /home/ubuntu/mq-bench
 #   scripts/orchestrate_fanin_under_steady_load.sh --transports "mqtt" --mqtt-brokers "mosquitto emqx"
+#   scripts/orchestrate_fanin_under_steady_load.sh --append-to fanin_steady_load --transports "nats"  # bare name resolves under results/
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
@@ -57,12 +58,14 @@ DRY_RUN=${DRY_RUN:-0}
 HOST="${HOST:-}"
 SUMMARY_OVERRIDE="${SUMMARY_OVERRIDE:-}"
 INTERVAL_SEC=65
+PUBLISHER_EXIT_GRACE_SECS=120
 
 # Sequential / Remote execution
 SEQUENTIAL=0
 SSH_TARGET=""
 REMOTE_DIR="~/mq-bench"
 APPEND_LATEST=0
+APPEND_TO_DIR=""
 WARMUP_PAYLOAD=""
 
 MQTT_BROKERS="mosquitto:127.0.0.1:1883 emqx:127.0.0.1:1884 hivemq:127.0.0.1:1885 rabbitmq:127.0.0.1:1886 artemis:127.0.0.1:1887"
@@ -114,6 +117,20 @@ usage() {
 }
 
 init_dirs() {
+  if [[ -n "${APPEND_TO_DIR}" ]]; then
+    case "${APPEND_TO_DIR}" in
+      /*) BENCH_DIR="${APPEND_TO_DIR}" ;;
+      */*) BENCH_DIR="${REPO_ROOT}/${APPEND_TO_DIR}" ;;
+      *) BENCH_DIR="${REPO_ROOT}/results/${APPEND_TO_DIR}" ;;
+    esac
+    if [[ ! -d "${BENCH_DIR}" ]]; then
+      echo "[error] --append-to directory does not exist: ${BENCH_DIR}" >&2
+      exit 2
+    fi
+    log "Appending to requested run: ${BENCH_DIR}"
+    APPEND_LATEST=1
+  fi
+
   if [[ ${APPEND_LATEST} -eq 1 ]] && [[ -z "${SUMMARY_OVERRIDE}" ]] && [[ -z "${BENCH_DIR}" ]]; then
     local latest_dir
     latest_dir=$(ls -1d "${REPO_ROOT}/results/fanin_steady_load_"* 2>/dev/null | sort -r | head -1 || true)
@@ -725,6 +742,8 @@ run_workload() {
   local stats_pid=0
   local sub_pid=0
   local pub_pid=0
+  local pub_timed_out=0
+  local pub_exit_status=0
   local stats_duration=$(( SUB_STARTUP_DELAY + duration + 15 ))
 
   if [[ "${DRY_RUN}" != 1 ]]; then
@@ -765,18 +784,48 @@ run_workload() {
   if [[ "${DRY_RUN}" != 1 ]]; then
     "${pub_cmd[@]}" >"${pub_log}" 2>&1 &
     pub_pid=$!
+    local pub_deadline=$(( SECONDS + duration + PUBLISHER_EXIT_GRACE_SECS ))
+    local i
 
     log "[watch] printing status every ${SNAPSHOT}s..."
     while kill -0 "${pub_pid}" 2>/dev/null; do
+      if (( SECONDS >= pub_deadline )); then
+        log "ERROR: publisher for ${run_id} did not exit within $(( duration + PUBLISHER_EXIT_GRACE_SECS ))s; stopping run"
+        pub_timed_out=1
+        kill -TERM "${pub_pid}" 2>/dev/null || true
+        for (( i=0; i<5; i++ )); do
+          if ! kill -0 "${pub_pid}" 2>/dev/null; then break; fi
+          sleep 1
+        done
+        if kill -0 "${pub_pid}" 2>/dev/null; then
+          kill -KILL "${pub_pid}" 2>/dev/null || true
+        fi
+        break
+      fi
       print_fanin_status "${sub_csv}" "${pub_csv}" "${publishers}"
       sleep "${SNAPSHOT}"
     done
-    wait "${pub_pid}" || true
+    wait "${pub_pid}" || pub_exit_status=$?
     print_fanin_status "${sub_csv}" "${pub_csv}" "${publishers}"
 
     sleep 2
     if (( sub_pid > 0 )); then
       kill -INT "${sub_pid}" >/dev/null 2>&1 || true
+      for (( i=0; i<10; i++ )); do
+        if ! kill -0 "${sub_pid}" 2>/dev/null; then break; fi
+        sleep 1
+      done
+      if kill -0 "${sub_pid}" 2>/dev/null; then
+        log "WARN: subscriber for ${run_id} did not exit after SIGINT; terminating it"
+        kill -TERM "${sub_pid}" 2>/dev/null || true
+        for (( i=0; i<5; i++ )); do
+          if ! kill -0 "${sub_pid}" 2>/dev/null; then break; fi
+          sleep 1
+        done
+        if kill -0 "${sub_pid}" 2>/dev/null; then
+          kill -KILL "${sub_pid}" 2>/dev/null || true
+        fi
+      fi
       wait "${sub_pid}" 2>/dev/null || true
     fi
   fi
@@ -784,6 +833,13 @@ run_workload() {
   if (( stats_pid > 0 )); then
     stop_broker_stats_monitor "${stats_pid}"
     wait "${stats_pid}" 2>/dev/null || true
+  fi
+  if (( pub_timed_out > 0 )); then
+    return 1
+  fi
+  if (( pub_exit_status != 0 )); then
+    log "ERROR: publisher for ${run_id} exited with status ${pub_exit_status}; stopping run"
+    return 1
   fi
 }
 
@@ -1076,6 +1132,10 @@ while [[ $# -gt 0 ]]; do
       shift
       INTERVAL_SEC=${1:-0}
       ;;
+    --publisher-exit-grace-secs)
+      shift
+      PUBLISHER_EXIT_GRACE_SECS=${1:-120}
+      ;;
     --sequential)
       SEQUENTIAL=1
       ;;
@@ -1089,6 +1149,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --append-latest)
       APPEND_LATEST=1
+      ;;
+    --append-to)
+      shift
+      APPEND_TO_DIR=${1:-}
       ;;
     -h|--help)
       usage

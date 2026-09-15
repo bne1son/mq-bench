@@ -158,6 +158,10 @@ enum Commands {
         #[arg(long, default_value = "-1", allow_hyphen_values = true)]
         publishers: i64,
 
+        /// Global topic index assigned to the first logical publisher
+        #[arg(long, default_value = "0")]
+        topic_index_start: u64,
+
         /// Mapping mode (mdim|hash)
         #[arg(long, default_value = "mdim")]
         mapping: String,
@@ -310,6 +314,30 @@ enum Commands {
         /// Deterministic phase staggering (seconds) applied per topic index (requires --crash-per-topic)
         #[arg(long, default_value = "0")]
         crash_stagger_secs: f64,
+
+        /// Deterministic per-subscriber outage schedule CSV
+        #[arg(long)]
+        availability_schedule: Option<String>,
+
+        /// Seconds from process start to schedule time zero
+        #[arg(long, default_value = "60")]
+        availability_start_delay: u64,
+
+        /// Final all-online drain duration in seconds
+        #[arg(long, default_value = "120")]
+        final_drain_secs: u64,
+
+        /// Actual subscriber lifecycle event CSV
+        #[arg(long)]
+        subscriber_events: Option<String>,
+
+        /// Duplicate-safe per-message receive trace CSV
+        #[arg(long)]
+        receive_trace: Option<String>,
+
+        /// File written with the experiment epoch after every initial SUBACK
+        #[arg(long)]
+        availability_ready: Option<String>,
     },
     /// Subscriber role
     Sub {
@@ -674,11 +702,22 @@ async fn main() -> Result<()> {
                     crash_config: crash_cfg,
                 };
                 handles.push(tokio::spawn(async move {
-                    let _ = run_publisher(cfg).await;
+                    // This also bounds connection setup, stats, and shutdown awaits.
+                    // A hung task would otherwise keep join_all waiting forever.
+                    let exit_limit =
+                        std::time::Duration::from_secs(publisher_duration_secs.saturating_add(120));
+                    tokio::time::timeout(exit_limit, run_publisher(cfg))
+                        .await
+                        .map_err(|_| {
+                            anyhow::anyhow!(
+                                "publisher {i} exceeded its {}s exit deadline",
+                                exit_limit.as_secs()
+                            )
+                        })?
                 }));
             }
             // Wait for all publishers to finish
-            let _ = join_all(handles).await;
+            let publisher_results = join_all(handles).await;
             // Write final snapshot once more and cleanup
             if let Some(stats) = shared_stats {
                 if let Some(mut out) = agg_output {
@@ -688,6 +727,9 @@ async fn main() -> Result<()> {
             }
             if let Some(h) = agg_handle {
                 h.abort();
+            }
+            for result in publisher_results {
+                result??;
             }
             Ok(())
         }
@@ -701,6 +743,7 @@ async fn main() -> Result<()> {
             services,
             shards,
             publishers,
+            topic_index_start,
             mapping,
             payload,
             rate,
@@ -777,6 +820,7 @@ async fn main() -> Result<()> {
                 services,
                 shards,
                 publishers,
+                topic_index_start,
                 mapping,
                 payload_size: payload as usize,
                 rate_per_pub: match rate {
@@ -829,6 +873,12 @@ async fn main() -> Result<()> {
             crash_seed,
             crash_per_topic,
             crash_stagger_secs,
+            availability_schedule,
+            availability_start_delay,
+            final_drain_secs,
+            subscriber_events,
+            receive_trace,
+            availability_ready,
         } => {
             let engine = parse_engine(&engine).unwrap_or(Engine::Zenoh);
             let mut conn = parse_connect_kv(&connect);
@@ -899,6 +949,12 @@ async fn main() -> Result<()> {
                 crash_config: crash_cfg,
                 crash_per_topic,
                 crash_stagger_secs,
+                availability_schedule,
+                availability_start_delay,
+                final_drain_secs,
+                subscriber_events,
+                receive_trace,
+                availability_ready,
             };
             run_multi_topic_sub(cfg).await?;
             if let Some(stats) = shared_stats {

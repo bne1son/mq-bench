@@ -32,6 +32,14 @@ pub struct PublisherConfig {
     pub crash_config: CrashConfig,
 }
 
+async fn wait_until_deadline(deadline: Option<tokio::time::Instant>) {
+    if let Some(deadline) = deadline {
+        tokio::time::sleep_until(deadline).await;
+    } else {
+        std::future::pending::<()>().await;
+    }
+}
+
 pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
     info!(
         engine = ?config.engine,
@@ -112,6 +120,8 @@ pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
         .as_ref()
         .map(|profile| profile.total_duration_secs())
         .or(config.duration_secs);
+    let deadline = effective_duration_secs
+        .map(|duration| tokio::time::Instant::from_std(start_time + Duration::from_secs(duration)));
     let mut active_profile_phase: Option<usize> = None;
     let mut active_profile_rate: Option<f64> = None;
     let mut rate_controller = if config.rate_profile.is_some() {
@@ -229,6 +239,11 @@ pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
                             continue;
                         }
                         _ = tokio::time::sleep(idle_tick) => {}
+                        _ = wait_until_deadline(deadline) => {
+                            info!("Duration limit reached while waiting, stopping publisher");
+                            stopped = true;
+                            break false;
+                        }
                         _ = signal::ctrl_c() => {
                             info!("Ctrl+C received, stopping publisher");
                             stopped = true;
@@ -238,6 +253,11 @@ pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
                 } else {
                     tokio::select! {
                         _ = tokio::time::sleep(idle_tick) => {}
+                        _ = wait_until_deadline(deadline) => {
+                            info!("Duration limit reached while waiting, stopping publisher");
+                            stopped = true;
+                            break false;
+                        }
                         _ = signal::ctrl_c() => {
                             info!("Ctrl+C received, stopping publisher");
                             stopped = true;
@@ -257,6 +277,11 @@ pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
                         _ = tokio::time::sleep(time_to_crash) => {
                             continue; // Re-check crash condition
                         }
+                        _ = wait_until_deadline(deadline) => {
+                            info!("Duration limit reached while waiting, stopping publisher");
+                            stopped = true;
+                            break false;
+                        }
                         _ = signal::ctrl_c() => {
                             info!("Ctrl+C received, stopping publisher");
                             stopped = true;
@@ -268,6 +293,11 @@ pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
                     tokio::select! {
                         _ = tokio::time::sleep(time_to_crash) => {
                             continue;
+                        }
+                        _ = wait_until_deadline(deadline) => {
+                            info!("Duration limit reached while waiting, stopping publisher");
+                            stopped = true;
+                            break false;
                         }
                         _ = signal::ctrl_c() => {
                             info!("Ctrl+C received, stopping publisher");
@@ -282,6 +312,11 @@ pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
                 if let Some(rc) = &mut rate_controller {
                     tokio::select! {
                         _ = rc.wait_for_next() => {}
+                        _ = wait_until_deadline(deadline) => {
+                            info!("Duration limit reached while waiting, stopping publisher");
+                            stopped = true;
+                            break false;
+                        }
                         _ = signal::ctrl_c() => {
                             info!("Ctrl+C received, stopping publisher");
                             stopped = true;
@@ -295,7 +330,22 @@ pub async fn run_publisher(config: PublisherConfig) -> Result<()> {
             let payload = generate_payload(sequence, config.payload_size);
             let bytes = Bytes::from(payload);
 
-            match publisher.publish(bytes).await {
+            // A blocked transport send must not keep a duration-limited publisher
+            // alive forever. The loop's duration check only runs between sends.
+            let publish_result = if let Some(deadline) = deadline {
+                match tokio::time::timeout_at(deadline, publisher.publish(bytes)).await {
+                    Ok(result) => result,
+                    Err(_) => {
+                        info!("Duration limit reached during publish, stopping publisher");
+                        stopped = true;
+                        break false;
+                    }
+                }
+            } else {
+                publisher.publish(bytes).await
+            };
+
+            match publish_result {
                 Ok(_) => {
                     stats.record_sent().await;
                     sequence = sequence.wrapping_add(sequence_step);

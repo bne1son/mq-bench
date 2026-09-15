@@ -1,4 +1,5 @@
 use hdrhistogram::Histogram;
+use std::sync::OnceLock;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use tokio::sync::RwLock;
@@ -34,7 +35,7 @@ pub struct Stats {
     last_received_count: RwLock<u64>,
 
     // First activity times
-    first_sent_time: RwLock<Option<Instant>>,
+    first_sent_time: OnceLock<Instant>,
     first_received_time: RwLock<Option<Instant>>,
 
     // Duplicate/gap counters (reported by clients with local SequenceTracker)
@@ -67,7 +68,7 @@ impl Stats {
             last_snapshot: RwLock::new(now),
             last_sent_count: RwLock::new(0),
             last_received_count: RwLock::new(0),
-            first_sent_time: RwLock::new(None),
+            first_sent_time: OnceLock::new(),
             first_received_time: RwLock::new(None),
             duplicate_count: AtomicU64::new(0),
             gap_count: AtomicU64::new(0),
@@ -78,10 +79,9 @@ impl Stats {
     /// Record a sent message
     pub async fn record_sent(&self) {
         self.sent_count.fetch_add(1, Ordering::Relaxed);
-        let mut first = self.first_sent_time.write().await;
-        if first.is_none() {
-            *first = Some(Instant::now());
-        }
+        // The first-send timestamp is write-once. Avoid taking a shared write
+        // lock for every message when thousands of publishers use one collector.
+        self.first_sent_time.get_or_init(Instant::now);
     }
 
     /// Record a received message with latency
@@ -293,10 +293,8 @@ impl Stats {
 
         let since_first_sent = self
             .first_sent_time
-            .read()
-            .await
-            .map(|t| now.checked_duration_since(t))
-            .flatten();
+            .get()
+            .and_then(|t| now.checked_duration_since(*t));
         let since_first_received = self
             .first_received_time
             .read()

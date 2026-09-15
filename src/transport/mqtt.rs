@@ -1,11 +1,14 @@
 //! MQTT adapter (feature `transport-mqtt`), using rumqttc (async) with QoS 0.
 use crate::transport::{
     ConnectOptions, IncomingQuery, Payload, Publisher, QueryRegistration, QueryResponder,
-    QueryResponderInner, Subscription, Transport, TransportError, TransportMessage,
+    QueryResponderInner, Subscription, SubscriptionConnectionInfo, Transport, TransportError,
+    TransportMessage,
 };
 use bytes::Bytes;
 use rumqttc::{AsyncClient, Event, Incoming, MqttOptions, QoS};
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use tokio::sync::oneshot;
 use tokio::task::JoinHandle;
 
 fn fnv1a64_bytes(bytes: &[u8]) -> u64 {
@@ -145,7 +148,7 @@ impl Transport for MqttTransport {
             format!("sub-{}-{:016x}", base, topic_hash)
         };
         let cid_debug = cid.clone();
-        let mut options = MqttOptions::new(cid, self.host.clone(), self.port);
+        let mut options = MqttOptions::new(cid.clone(), self.host.clone(), self.port);
         options.set_keep_alive(self.keep_alive);
         options.set_max_packet_size(self.max_in, self.max_out);
         options.set_clean_session(self.clean_session);
@@ -160,10 +163,30 @@ impl Transport for MqttTransport {
             .await
             .map_err(|e| TransportError::Subscribe(e.to_string()))?;
         let handler = std::sync::Arc::new(handler);
+        let (ready_tx, ready_rx) = oneshot::channel::<Result<(bool, u64), String>>();
+        let connection_failure = Arc::new(Mutex::new(None));
+        let connection_failure_task = connection_failure.clone();
         let handle: JoinHandle<()> = tokio::spawn(async move {
             let _client = client;
+            let mut ready_tx = Some(ready_tx);
+            let mut session_present = None;
             loop {
                 match eventloop.poll().await {
+                    Ok(Event::Incoming(Incoming::ConnAck(ack))) => {
+                        let connected_at_ns = std::time::SystemTime::now()
+                            .duration_since(std::time::UNIX_EPOCH)
+                            .map(|value| value.as_nanos() as u64)
+                            .unwrap_or(0);
+                        session_present = Some((ack.session_present, connected_at_ns));
+                    }
+                    Ok(Event::Incoming(Incoming::SubAck(_))) => {
+                        if let Some(tx) = ready_tx.take() {
+                            let result = session_present.ok_or_else(|| {
+                                "MQTT SUBACK arrived before a confirmed CONNACK".to_string()
+                            });
+                            let _ = tx.send(result);
+                        }
+                    }
                     Ok(Event::Incoming(Incoming::Publish(p))) => {
                         (handler)(TransportMessage {
                             payload: Payload::from_bytes(p.payload),
@@ -171,13 +194,46 @@ impl Transport for MqttTransport {
                     }
                     Ok(_) => {}
                     Err(e) => {
+                        if let Some(tx) = ready_tx.take() {
+                            let _ = tx.send(Err(e.to_string()));
+                            break;
+                        }
                         tracing::warn!(client_id = %cid_debug, error = %e, "MQTT subscription eventloop error; continuing poll loop");
-                        tokio::time::sleep(Duration::from_secs(1)).await;
+                        if let Ok(mut failure) = connection_failure_task.lock() {
+                            *failure = Some(e.to_string());
+                        }
+                        break;
                     }
                 }
             }
         });
-        Ok(Box::new(MqttSubscription { handle }))
+        let (session_present, connected_at_ns) =
+            match tokio::time::timeout(Duration::from_secs(30), ready_rx).await {
+                Ok(Ok(Ok(value))) => value,
+                Ok(Ok(Err(error))) => {
+                    handle.abort();
+                    return Err(TransportError::Subscribe(error));
+                }
+                Ok(Err(_)) => {
+                    handle.abort();
+                    return Err(TransportError::Subscribe(
+                        "MQTT subscription task ended before SUBACK".into(),
+                    ));
+                }
+                Err(_) => {
+                    handle.abort();
+                    return Err(TransportError::Timeout);
+                }
+            };
+        Ok(Box::new(MqttSubscription {
+            handle,
+            connection_info: SubscriptionConnectionInfo {
+                client_id: cid,
+                session_present,
+                connected_at_ns,
+            },
+            connection_failure,
+        }))
     }
 
     async fn create_publisher(&self, topic: &str) -> Result<Box<dyn Publisher>, TransportError> {
@@ -391,6 +447,8 @@ impl Publisher for MqttPublisher {
 
 struct MqttSubscription {
     handle: JoinHandle<()>,
+    connection_info: SubscriptionConnectionInfo,
+    connection_failure: Arc<Mutex<Option<String>>>,
 }
 
 #[async_trait::async_trait]
@@ -404,6 +462,15 @@ impl Subscription for MqttSubscription {
         // Broker will see this as unexpected disconnect.
         self.handle.abort();
         Ok(())
+    }
+    fn connection_info(&self) -> Option<SubscriptionConnectionInfo> {
+        Some(self.connection_info.clone())
+    }
+    fn connection_failure(&self) -> Option<String> {
+        self.connection_failure
+            .lock()
+            .ok()
+            .and_then(|failure| failure.clone())
     }
 }
 

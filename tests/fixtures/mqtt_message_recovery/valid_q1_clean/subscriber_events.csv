@@ -1,0 +1,13 @@
+timestamp_ns,elapsed_s,subscriber_index,cycle_index,event,client_id,session_present,status
+1000100000000,0.100000,0,-1,initial_connect,sub-fixture-0,false,ok
+1000100000001,0.100001,1,-1,initial_connect,sub-fixture-1,false,ok
+1005000000000,5.000000,0,0,power_off,sub-fixture-0,false,ok
+1005000000001,5.000001,1,0,power_off,sub-fixture-1,false,ok
+1009000000000,9.000000,0,0,reconnect_start,sub-fixture-0,false,ok
+1009000000001,9.000001,1,0,reconnect_start,sub-fixture-1,false,ok
+1009000000002,9.000000,0,0,reconnect_complete,sub-fixture-0,false,ok
+1009000000003,9.000001,1,0,reconnect_complete,sub-fixture-1,false,ok
+1012000000000,12.000000,0,-1,forced_online_for_drain,sub-fixture-0,false,already_online
+1012000000001,12.000001,1,-1,forced_online_for_drain,sub-fixture-1,false,already_online
+1015000000000,15.000000,0,-1,final_disconnect,sub-fixture-0,false,ok
+1015000000001,15.000001,1,-1,final_disconnect,sub-fixture-1,false,ok

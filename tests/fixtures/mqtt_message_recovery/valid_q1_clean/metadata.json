@@ -1,0 +1,21 @@
+{
+  "run_id": "fixture_q1_clean",
+  "run_kind": "test",
+  "mode": "q1_clean",
+  "dar": 0.6,
+  "seed": 7,
+  "subscribers": 2,
+  "cycles": 1,
+  "cycle_secs": 10,
+  "warmup_secs": 2,
+  "final_drain_secs": 3,
+  "subscriber_start_ns": 1000000000000,
+  "publisher_count": 2,
+  "topic_ranges": [
+    {"publisher": 0, "start": 0, "count": 1},
+    {"publisher": 1, "start": 1, "count": 1}
+  ],
+  "aggregate_rate": 2,
+  "schedule_sha256": "4a16984528d4a30c06957690881a1b8cdd70359c1dd4e0f05af7408c067f1921",
+  "exit_codes": {"subscriber": 0, "publisher_0": 0, "publisher_1": 0}
+}

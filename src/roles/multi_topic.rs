@@ -33,6 +33,7 @@ pub struct MultiTopicConfig {
     pub services: u32,
     pub shards: u32,
     pub publishers: i64, // number of logical publishers (<= T*R*S*K); negative => use total_keys
+    pub topic_index_start: u64,
     pub mapping: KeyMappingMode, // mapping mode from i -> (t,r,s,k)
     pub payload_size: usize,
     pub rate_per_pub: Option<f64>,
@@ -70,7 +71,14 @@ fn derive_topic_seed(base_seed: u64, topic_idx: u64) -> u64 {
     base_seed ^ fnv1a64(topic_idx.wrapping_add(0x9e3779b97f4a7c15))
 }
 
-fn map_index(i: u64, t: u32, r: u32, s: u32, k: u32, mode: KeyMappingMode) -> (u32, u32, u32, u32) {
+pub(crate) fn map_index(
+    i: u64,
+    t: u32,
+    r: u32,
+    s: u32,
+    k: u32,
+    mode: KeyMappingMode,
+) -> (u32, u32, u32, u32) {
     let t64 = t as u64;
     let r64 = r as u64;
     let s64 = s as u64;
@@ -101,10 +109,18 @@ pub async fn run_multi_topic(config: MultiTopicConfig) -> Result<()> {
         .saturating_mul(config.services as u64)
         .saturating_mul(config.shards as u64);
     let pubs: u64 = if config.publishers < 0 {
-        total_keys
+        total_keys.saturating_sub(config.topic_index_start)
     } else {
-        (config.publishers as u64).min(total_keys)
+        config.publishers as u64
     };
+    anyhow::ensure!(
+        config.topic_index_start <= total_keys
+            && config.topic_index_start.saturating_add(pubs) <= total_keys,
+        "publisher topic range {}..{} exceeds total key count {}",
+        config.topic_index_start,
+        config.topic_index_start.saturating_add(pubs),
+        total_keys
+    );
 
     info!(
         engine = ?config.engine,
@@ -179,7 +195,7 @@ pub async fn run_multi_topic(config: MultiTopicConfig) -> Result<()> {
         let mut pub_handles = Vec::with_capacity(pubs as usize);
         for i in 0..pubs {
             let (t, r, s, k) = map_index(
-                i,
+                config.topic_index_start + i,
                 config.tenants,
                 config.regions,
                 config.services,
@@ -416,7 +432,7 @@ pub async fn run_multi_topic(config: MultiTopicConfig) -> Result<()> {
                 tokio::time::sleep(Duration::from_micros(ramp_delay_us)).await;
             }
             let (t, r, s, k) = map_index(
-                i,
+                config.topic_index_start + i,
                 config.tenants,
                 config.regions,
                 config.services,
@@ -592,7 +608,7 @@ pub async fn run_multi_topic(config: MultiTopicConfig) -> Result<()> {
                 tokio::time::sleep(Duration::from_micros(ramp_delay_us)).await;
             }
             let (t, r, s, k) = map_index(
-                i,
+                config.topic_index_start + i,
                 config.tenants,
                 config.regions,
                 config.services,
@@ -765,6 +781,13 @@ pub struct MultiTopicSubConfig {
     /// Optional deterministic phase staggering (seconds) applied per topic index.
     /// Effective only when `crash_per_topic=true`.
     pub crash_stagger_secs: f64,
+    /// Fixed-DAR outage schedule. When present, stochastic crash settings are rejected.
+    pub availability_schedule: Option<String>,
+    pub availability_start_delay: u64,
+    pub final_drain_secs: u64,
+    pub subscriber_events: Option<String>,
+    pub receive_trace: Option<String>,
+    pub availability_ready: Option<String>,
 }
 
 use crate::payload::parse_header;
@@ -800,6 +823,10 @@ pub async fn run_multi_topic_sub(config: MultiTopicSubConfig) -> Result<()> {
         .shared_stats
         .clone()
         .unwrap_or_else(|| Arc::new(Stats::new()));
+
+    if config.availability_schedule.is_some() {
+        return crate::roles::mqtt_recovery::run_scheduled_subscribers(config, stats).await;
+    }
 
     // Optional internal snapshot to stdout when not aggregated
     let snapshot_handle = if !config.disable_internal_snapshot {
@@ -1382,4 +1409,26 @@ pub async fn run_multi_topic_sub(config: MultiTopicSubConfig) -> Result<()> {
     );
 
     Ok(())
+}
+
+#[cfg(test)]
+mod recovery_partition_tests {
+    use super::{KeyMappingMode, map_index};
+    use std::collections::HashSet;
+
+    #[test]
+    fn ten_publisher_ranges_partition_all_recovery_topics() {
+        let mut indices = Vec::new();
+        for publisher in 0..10u64 {
+            indices.extend((publisher * 100)..(publisher * 100 + 100));
+        }
+        assert_eq!(indices, (0..1000).collect::<Vec<_>>());
+        assert_eq!(indices.iter().copied().collect::<HashSet<_>>().len(), 1000);
+
+        let keys = indices
+            .iter()
+            .map(|index| map_index(*index, 10, 10, 10, 1, KeyMappingMode::MDim))
+            .collect::<HashSet<_>>();
+        assert_eq!(keys.len(), 1000);
+    }
 }

@@ -70,6 +70,11 @@ WARMUP_SECS=0
 WARMUP_PAYLOAD=1024
 IGNORE_START_SECS=5
 IGNORE_END_SECS=5
+ACTIVE_CONN_WINDOW_RATIO=0.90
+RESOURCE_ACTIVE_CONN_RATIO=1.00
+PUBLISHER_TARGET_RATIO=0.99
+DELIVERY_PLATEAU_RATIO=0.95
+DELIVERY_PLATEAU_CONSECUTIVE=3
 RUN_ID_PREFIX="fanout_steady"
 TRANSPORTS=(zenoh redis nats rabbitmq mqtt)
 DEFAULT_TRANSPORTS=(zenoh redis nats rabbitmq mqtt)
@@ -172,6 +177,26 @@ init_dirs() {
     fi
   else
     SUMMARY_CSV="${RAW_DIR}/summary.csv"
+  fi
+}
+
+ensure_summary_schema() {
+  local header=""
+  if [[ -s "${SUMMARY_CSV}" ]]; then
+    IFS= read -r header < "${SUMMARY_CSV}" || true
+  fi
+
+  if [[ -z "${header}" ]]; then
+    echo "transport,host,port,payload,subs,pubs,rate_per_pub,rate,delivery_rate,target_throughput,run_id,sub_tps,p50_ms,p95_ms,p99_ms,pub_tps,sent,recv,errors,loss_pct,artifacts_dir,max_cpu_perc,max_mem_perc,max_mem_used_bytes,avg_cpu_perc,avg_mem_perc,avg_mem_used_bytes,max_net_rx_bps,max_net_tx_bps,avg_net_rx_bps,avg_net_tx_bps,run_status" > "${SUMMARY_CSV}"
+    return 0
+  fi
+
+  if [[ ",${header}," != *",run_status,"* ]]; then
+    local tmp_csv
+    tmp_csv="$(mktemp "${SUMMARY_CSV}.tmp.XXXXXX")"
+    awk 'NR == 1 { print $0 ",run_status"; next } { print $0 ",complete" }' "${SUMMARY_CSV}" > "${tmp_csv}"
+    mv "${tmp_csv}" "${SUMMARY_CSV}"
+    log "Added run_status column to existing summary: ${SUMMARY_CSV}"
   fi
 }
 
@@ -289,6 +314,14 @@ while [[ $# -gt 0 ]]; do
     --ignore-end-secs)
       shift
       IGNORE_END_SECS=${1:-5}
+      ;;
+    --delivery-plateau-ratio)
+      shift
+      DELIVERY_PLATEAU_RATIO=${1:-0.95}
+      ;;
+    --delivery-plateau-consecutive)
+      shift
+      DELIVERY_PLATEAU_CONSECUTIVE=${1:-3}
       ;;
     --sequential)
       SEQUENTIAL=1
@@ -436,9 +469,7 @@ if [[ -n "${HOST}" ]]; then
   AMQP_BROKERS_ARR=("${_REWRITTEN_AMQP[@]}")
 fi
 
-if [[ ! -s "${SUMMARY_CSV}" ]]; then
-  echo "transport,host,port,payload,subs,pubs,rate_per_pub,rate,delivery_rate,run_id,sub_tps,p50_ms,p95_ms,p99_ms,pub_tps,sent,recv,errors,loss_pct,artifacts_dir,max_cpu_perc,max_mem_perc,max_mem_used_bytes,avg_cpu_perc,avg_mem_perc,avg_mem_used_bytes,max_net_rx_bps,max_net_tx_bps,avg_net_rx_bps,avg_net_tx_bps" > "${SUMMARY_CSV}"
-fi
+ensure_summary_schema
 
 calc_pubs_for_subs() {
   local subs="$1"
@@ -454,7 +485,11 @@ calc_pubs_for_subs() {
 
 extract_steady_state_metrics() {
   local sub_csv="$1"
-  awk -F, -v ignore_start="${IGNORE_START_SECS}" -v ignore_end="${IGNORE_END_SECS}" '
+  local expected_subs="${2:-0}"
+  local ignore_start="${3:-${IGNORE_START_SECS}}"
+  local ignore_end="${4:-${IGNORE_END_SECS}}"
+  local active_ratio="${5:-${ACTIVE_CONN_WINDOW_RATIO}}"
+  awk -F, -v ignore_start="${ignore_start}" -v ignore_end="${ignore_end}" -v expected_subs="${expected_subs}" -v active_ratio="${active_ratio}" '
     NR == 1 { next }
     {
       ts = $1 + 0
@@ -467,14 +502,27 @@ extract_steady_state_metrics() {
       row_p50[NR] = $7 + 0
       row_p95[NR] = $8 + 0
       row_p99[NR] = $9 + 0
+      row_active[NR] = $18 + 0
       total_rows = NR
     }
     END {
       window_start = min_ts + ignore_start
       window_end = max_ts - ignore_end
+      active_threshold = expected_subs * active_ratio
       for (i = 2; i <= total_rows; i++) {
         ts = row_ts[i]
-        if (ts >= window_start && ts <= window_end && row_recv[i] > 0) {
+        if (ts >= window_start && ts <= window_end && row_recv[i] > 0 && row_active[i] >= active_threshold) {
+          if (active_start_ts == "") active_start_ts = ts
+          active_end_ts = ts
+        }
+      }
+      if (active_start_ts == "" || active_end_ts == "") {
+        print "0.00,0,0,0,0,0,0,0,0,0"
+        exit
+      }
+      for (i = 2; i <= total_rows; i++) {
+        ts = row_ts[i]
+        if (ts >= active_start_ts && ts <= active_end_ts && row_recv[i] > 0) {
           if (first_ts == "") {
             first_ts = ts
             first_recv = row_recv[i]
@@ -511,32 +559,136 @@ extract_steady_state_metrics() {
 
 extract_pub_tps() {
   local pub_csv="$1"
-  awk -F, -v ignore_start="${IGNORE_START_SECS}" -v ignore_end="${IGNORE_END_SECS}" '
+  local start_ts="${2:-0}"
+  local end_ts="${3:-0}"
+  awk -F, -v start_ts="${start_ts}" -v end_ts="${end_ts}" '
     NR == 1 { next }
     {
       ts = $1 + 0
-      if (min_ts == "" || ts < min_ts) min_ts = ts
-      if (max_ts == "" || ts > max_ts) max_ts = ts
-      row_ts[NR] = ts
-      row_sent[NR] = $2 + 0
-      total_rows = NR
+      if (ts < start_ts || ts > end_ts || $2 + 0 <= 0) next
+      if (first_ts == "") { first_ts = ts; first_sent = $2 + 0 }
+      last_ts = ts
+      last_sent = $2 + 0
     }
     END {
-      window_start = min_ts + ignore_start
-      window_end = max_ts - ignore_end
-      for (i = 2; i <= total_rows; i++) {
-        ts = row_ts[i]
-        if (ts >= window_start && ts <= window_end && row_sent[i] > 0) {
-          if (first_ts == "") { first_ts = ts; first_sent = row_sent[i] }
-          last_ts = ts
-          last_sent = row_sent[i]
-        }
+      if (first_ts == "" || last_ts == "") {
+        print ""
+        exit
       }
       duration = last_ts - first_ts
       if (duration > 0) printf "%.2f", (last_sent - first_sent) / duration
       else print ""
     }
   ' "${pub_csv}"
+}
+
+extract_resource_window() {
+  local sub_csv="$1"
+  local pub_csv="$2"
+  local expected_subs="$3"
+  local target_pub_rate="$4"
+  local base_start_ts="$5"
+  local base_end_ts="$6"
+
+  local full_active_ts=""
+  local pub_target_ts=""
+  local delivery_plateau_ts=""
+  if [[ -f "${sub_csv}" ]]; then
+    full_active_ts="$(
+      awk -F, -v start_ts="${base_start_ts}" -v end_ts="${base_end_ts}" -v expected_subs="${expected_subs}" -v active_ratio="${RESOURCE_ACTIVE_CONN_RATIO}" '
+        NR == 1 { next }
+        {
+          ts = $1 + 0
+          if (ts < start_ts || ts > end_ts) next
+          if (($3 + 0) > 0 && ($18 + 0) >= (expected_subs * active_ratio)) {
+            print ts
+            exit
+          }
+        }
+      ' "${sub_csv}"
+    )"
+    delivery_plateau_ts="$(
+      awk -F, -v start_ts="${base_start_ts}" -v end_ts="${base_end_ts}" -v ratio="${DELIVERY_PLATEAU_RATIO}" -v consecutive="${DELIVERY_PLATEAU_CONSECUTIVE}" '
+        NR == 1 { next }
+        {
+          if (consecutive < 1) consecutive = 1
+          ts = $1 + 0
+          if (ts < start_ts || ts > end_ts) next
+          if (($3 + 0) <= 0) next
+          row_ts[++count] = ts
+          # Prefer instantaneous delivery throughput for ramp detection; fall back to total throughput if needed.
+          row_delivery[count] = (($6 + 0) > 0 ? ($6 + 0) : ($5 + 0))
+        }
+        END {
+          if (count == 0 || ratio <= 0) exit
+
+          # Estimate the sustained plateau from a high percentile instead of
+          # the strongest short spike window, which can be unrepresentative.
+          for (i = 1; i <= count; i++) {
+            sorted[i] = row_delivery[i]
+          }
+          for (i = 2; i <= count; i++) {
+            v = sorted[i]
+            j = i - 1
+            while (j >= 1 && sorted[j] > v) {
+              sorted[j + 1] = sorted[j]
+              j--
+            }
+            sorted[j + 1] = v
+          }
+          plateau_idx = int(count * 0.90)
+          if (plateau_idx < 1) plateau_idx = 1
+          if (plateau_idx > count) plateau_idx = count
+          plateau = sorted[plateau_idx]
+          if (plateau <= 0) exit
+          threshold = plateau * ratio
+
+          streak = 0
+          for (i = 1; i <= count; i++) {
+            if (row_delivery[i] >= threshold) {
+              streak++
+              if (streak >= consecutive) {
+                print row_ts[i - consecutive + 1]
+                exit
+              }
+            } else {
+              streak = 0
+            }
+          }
+        }
+      ' "${sub_csv}"
+    )"
+  fi
+  if [[ -f "${pub_csv}" ]]; then
+    pub_target_ts="$(
+      awk -F, -v start_ts="${base_start_ts}" -v end_ts="${base_end_ts}" -v target_rate="${target_pub_rate}" -v target_ratio="${PUBLISHER_TARGET_RATIO}" '
+        NR == 1 { next }
+        {
+          ts = $1 + 0
+          if (ts < start_ts || ts > end_ts) next
+          total_tps = $5 + 0
+          interval_tps = $6 + 0
+          if (total_tps >= (target_rate * target_ratio) || interval_tps >= (target_rate * target_ratio)) {
+            print ts
+            exit
+          }
+        }
+      ' "${pub_csv}"
+    )"
+  fi
+
+  local resource_start_ts="${base_start_ts}"
+  if [[ -n "${full_active_ts}" ]] && (( full_active_ts > resource_start_ts )); then
+    resource_start_ts="${full_active_ts}"
+  fi
+  if [[ -n "${pub_target_ts}" ]] && (( pub_target_ts > resource_start_ts )); then
+    resource_start_ts="${pub_target_ts}"
+  fi
+  if [[ -n "${delivery_plateau_ts}" ]] && (( delivery_plateau_ts > resource_start_ts )); then
+    resource_start_ts="${delivery_plateau_ts}"
+  fi
+
+  printf "%s,%s,%s,%s,%s" "${resource_start_ts}" "${base_end_ts}" "${full_active_ts}" "${pub_target_ts}" "${delivery_plateau_ts}"
 }
 
 extract_stats_metrics() {
@@ -725,39 +877,47 @@ append_summary_from_artifacts() {
 
   local sub_csv="${art_dir}/sub_agg.csv"
   local pub_csv="${art_dir}/pub_agg.csv"
+  local run_status="complete"
+  local tps="" avg_p50_ns="" avg_p95_ns="" avg_p99_ns=""
+  local sent="" recv="" errors="" steady_rows=0 steady_start_ts=0 steady_end_ts=0
   if [[ ! -f "${sub_csv}" ]]; then
     if [[ -f "${art_dir}/sub.csv" ]]; then
       sub_csv="${art_dir}/sub.csv"
     else
       log "WARN: Missing subscriber CSV in ${art_dir}"
-      return 0
+      run_status="missing_subscriber_data"
+      sub_csv=""
     fi
   fi
   if [[ ! -f "${pub_csv}" ]] && [[ -f "${art_dir}/pub.csv" ]]; then
     pub_csv="${art_dir}/pub.csv"
   fi
 
-  local steady_state_metrics
-  steady_state_metrics="$(extract_steady_state_metrics "${sub_csv}")"
-  if [[ -z "${steady_state_metrics}" ]]; then
-    log "WARN: No subscriber data for ${run_id}"
-    return 0
+  if [[ -n "${sub_csv}" ]]; then
+    local steady_state_metrics
+    steady_state_metrics="$(extract_steady_state_metrics "${sub_csv}" "${subs}")"
+    if [[ -z "${steady_state_metrics}" ]]; then
+      log "WARN: No subscriber data for ${run_id}; recording incomplete summary row"
+      run_status="missing_subscriber_data"
+    else
+      IFS=, read -r tps avg_p50_ns avg_p95_ns avg_p99_ns sent recv errors steady_rows steady_start_ts steady_end_ts <<<"${steady_state_metrics}"
+      if [[ "${steady_rows}" -eq 0 ]]; then
+        log "WARN: No steady-state rows found for ${run_id} (ignore_start=${IGNORE_START_SECS}s, ignore_end=${IGNORE_END_SECS}s); recording incomplete summary row"
+        run_status="no_steady_state"
+        tps=""; avg_p50_ns=""; avg_p95_ns=""; avg_p99_ns=""
+        sent=""; recv=""; errors=""; steady_start_ts=0; steady_end_ts=0
+      fi
+    fi
   fi
 
-  local tps avg_p50_ns avg_p95_ns avg_p99_ns sent recv errors steady_rows steady_start_ts steady_end_ts
-  IFS=, read -r tps avg_p50_ns avg_p95_ns avg_p99_ns sent recv errors steady_rows steady_start_ts steady_end_ts <<<"${steady_state_metrics}"
-
-  if [[ "${steady_rows}" -eq 0 ]]; then
-    log "WARN: No steady-state rows found for ${run_id} (ignore_start=${IGNORE_START_SECS}s, ignore_end=${IGNORE_END_SECS}s)"
-    return 0
+  local loss_pct=""
+  if [[ "${run_status}" == "complete" ]]; then
+    loss_pct=$(awk -v s="${sent}" -v r="${recv}" 'BEGIN{if(s>0){printf("%.2f", (s-r)/s*100)}else{print "0.00"}}')
   fi
-
-  local loss_pct
-  loss_pct=$(awk -v s="${sent}" -v r="${recv}" 'BEGIN{if(s>0){printf("%.2f", (s-r)/s*100)}else{print "0.00"}}')
 
   local pub_tps=""
-  if [[ -f "${pub_csv}" ]]; then
-    pub_tps="$(extract_pub_tps "${pub_csv}")"
+  if [[ "${run_status}" == "complete" ]] && [[ -f "${pub_csv}" ]]; then
+    pub_tps="$(extract_pub_tps "${pub_csv}" "${steady_start_ts}" "${steady_end_ts}")"
   fi
 
   local p50_ms p95_ms p99_ms
@@ -769,8 +929,14 @@ append_summary_from_artifacts() {
   local max_cpu="" max_mem_perc="" max_mem_used="" avg_cpu="" avg_mem_perc="" avg_mem_used=""
   local max_net_rx_bps="" max_net_tx_bps="" avg_net_rx_bps="" avg_net_tx_bps=""
   if [[ -f "${stats_csv}" ]]; then
+    local resource_start_ts=0 resource_end_ts=0
+    if [[ "${run_status}" == "complete" ]]; then
+      local resource_window full_active_ts pub_target_ts delivery_plateau_ts
+      resource_window="$(extract_resource_window "${sub_csv}" "${pub_csv}" "${subs}" "${total_rate}" "${steady_start_ts}" "${steady_end_ts}")"
+      IFS=, read -r resource_start_ts resource_end_ts full_active_ts pub_target_ts delivery_plateau_ts <<<"${resource_window}"
+    fi
     local agg
-    agg="$(extract_stats_metrics "${stats_csv}" "${steady_start_ts}" "${steady_end_ts}")"
+    agg="$(extract_stats_metrics "${stats_csv}" "${resource_start_ts}" "${resource_end_ts}")"
     local stats_rows net_rows
     IFS=, read -r max_cpu max_mem_perc max_mem_used avg_cpu avg_mem_perc avg_mem_used max_net_rx_bps max_net_tx_bps avg_net_rx_bps avg_net_tx_bps stats_rows net_rows <<<"${agg}"
     if [[ "${stats_rows:-0}" -eq 0 ]]; then
@@ -783,7 +949,7 @@ append_summary_from_artifacts() {
     fi
   fi
 
-  echo "${transport},${host},${port},${payload},${subs},${pubs},${rate_per_pub},${total_rate},${delivery_rate},${run_id},${tps},${p50_ms},${p95_ms},${p99_ms},${pub_tps},${sent},${recv},${errors},${loss_pct},${art_dir},${max_cpu},${max_mem_perc},${max_mem_used},${avg_cpu},${avg_mem_perc},${avg_mem_used},${max_net_rx_bps},${max_net_tx_bps},${avg_net_rx_bps},${avg_net_tx_bps}" >> "${SUMMARY_CSV}"
+  echo "${transport},${host},${port},${payload},${subs},${pubs},${rate_per_pub},${total_rate},${delivery_rate},${delivery_rate},${run_id},${tps},${p50_ms},${p95_ms},${p99_ms},${pub_tps},${sent},${recv},${errors},${loss_pct},${art_dir},${max_cpu},${max_mem_perc},${max_mem_used},${avg_cpu},${avg_mem_perc},${avg_mem_used},${max_net_rx_bps},${max_net_tx_bps},${avg_net_rx_bps},${avg_net_tx_bps},${run_status}" >> "${SUMMARY_CSV}"
 }
 
 get_services() {
@@ -912,23 +1078,24 @@ run_warmup() {
   local env_common="PUBS=${pubs} SUBS=${subs} RATE=${total_rate} PAYLOAD=${WARMUP_PAYLOAD} DURATION=${WARMUP_SECS} SNAPSHOT=${WARMUP_SECS}"
   local host_env=""
   local rid="warmup_$(timestamp)_${transport}"
+  local artifacts_root="${BENCH_DIR}/artifacts"
 
   case "${transport}" in
     zenoh)
       if [[ -n "${HOST}" ]]; then host_env="ENDPOINT_SUB=tcp/${HOST}:7447 ENDPOINT_PUB=tcp/${HOST}:7447"; fi
-      run "ENGINE=zenoh ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
+      run "ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=zenoh ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
       ;;
     redis)
       if [[ -n "${HOST}" ]]; then host_env="REDIS_URL=redis://${HOST}:6379"; fi
-      run "ENGINE=redis ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
+      run "ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=redis ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
       ;;
     nats)
       if [[ -n "${HOST}" ]]; then host_env="NATS_HOST=${HOST}"; fi
-      run "ENGINE=nats ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
+      run "ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=nats ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
       ;;
     rabbitmq)
       if [[ -n "${HOST}" ]]; then host_env="RABBITMQ_HOST=${HOST}"; fi
-      run "ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
+      run "ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
       ;;
     mqtt)
       if [[ -z "${broker_name}" ]]; then return 0; fi
@@ -936,7 +1103,7 @@ run_warmup() {
       if [[ "${broker_name}" == "artemis" ]]; then
         host_env="${host_env} MQTT_USERNAME=admin MQTT_PASSWORD=admin"
       fi
-      run "ENGINE=mqtt ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
+      run "ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=mqtt ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
       ;;
     amqp)
       if [[ -z "${broker_name}" ]]; then return 0; fi
@@ -946,11 +1113,11 @@ run_warmup() {
       fi
       local amqp_url="amqp://${amqp_user}:${amqp_pass}@${broker_host}:${broker_port}/${amqp_vhost}"
       host_env="RABBITMQ_URL=${amqp_url}"
-      run "ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
+      run "ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\" >/dev/null 2>&1" || true
       ;;
   esac
 
-  rm -rf "${REPO_ROOT}/artifacts/${rid}" 2>/dev/null || true
+  rm -rf "${BENCH_DIR}/artifacts/${rid}" 2>/dev/null || true
   log "Warmup complete"
 }
 
@@ -988,7 +1155,8 @@ run_single_execution() {
   fi
 
   local rid="${RUN_ID_PREFIX}_$(timestamp)_${rid_suffix}"
-  local art_dir="${REPO_ROOT}/artifacts/${rid}/fanout_singlesite"
+  local artifacts_root="${BENCH_DIR}/artifacts"
+  local art_dir="${artifacts_root}/${rid}/fanout_singlesite"
   local env_common="PUBS=${pubs} SUBS=${subs} RATE=${total_rate} PAYLOAD=${payload} DURATION=${DURATION} SNAPSHOT=${SNAPSHOT}"
   local host_env=""
   local stats_pid=""
@@ -1040,19 +1208,19 @@ run_single_execution() {
   case "${transport}" in
     zenoh)
       if [[ -n "${HOST}" ]]; then host_env="ENDPOINT_SUB=tcp/${HOST}:7447 ENDPOINT_PUB=tcp/${HOST}:7447"; fi
-      run "${monitor_env} ENGINE=zenoh ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
+      run "${monitor_env} ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=zenoh ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
       ;;
     redis)
       if [[ -n "${HOST}" ]]; then host_env="REDIS_URL=redis://${HOST}:6379"; fi
-      run "${monitor_env} ENGINE=redis ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
+      run "${monitor_env} ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=redis ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
       ;;
     nats)
       if [[ -n "${HOST}" ]]; then host_env="NATS_HOST=${HOST}"; fi
-      run "${monitor_env} ENGINE=nats ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
+      run "${monitor_env} ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=nats ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
       ;;
     rabbitmq)
       if [[ -n "${HOST}" ]]; then host_env="RABBITMQ_HOST=${HOST}"; fi
-      run "${monitor_env} ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
+      run "${monitor_env} ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
       ;;
     mqtt)
       if [[ -z "${broker_name}" ]]; then
@@ -1063,7 +1231,7 @@ run_single_execution() {
       if [[ "${broker_name}" == "artemis" ]]; then
         host_env="${host_env} MQTT_USERNAME=admin MQTT_PASSWORD=admin"
       fi
-      run "${monitor_env} ENGINE=mqtt ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
+      run "${monitor_env} ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=mqtt ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
       ;;
     amqp)
       if [[ -z "${broker_name}" ]]; then
@@ -1076,7 +1244,7 @@ run_single_execution() {
       fi
       local amqp_url="amqp://${amqp_user}:${amqp_pass}@${broker_host}:${broker_port}/${amqp_vhost}"
       host_env="RABBITMQ_URL=${amqp_url}"
-      run "${monitor_env} ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
+      run "${monitor_env} ARTIFACTS_ROOT=${artifacts_root@Q} ENGINE=rabbitmq ${host_env} ${env_common} bash \"${SCRIPT_DIR}/run_fanout.sh\" \"${rid}\""
       ;;
     *)
       log "Unknown transport: ${transport}"

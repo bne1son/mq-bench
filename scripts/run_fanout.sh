@@ -68,7 +68,8 @@ if [[ -n "${RATE_PROFILE}" && ${DURATION_WAS_SET} -eq 0 ]]; then
 fi
 ENGINE="${ENGINE:-zenoh}"
 
-ART_DIR="artifacts/${RUN_ID}/fanout_singlesite"
+ARTIFACTS_ROOT="${ARTIFACTS_ROOT:-artifacts}"
+ART_DIR="${ARTIFACTS_ROOT}/${RUN_ID}/fanout_singlesite"
 BIN="./target/release/mq-bench"
 ENDPOINT_PUB="${ENDPOINT_PUB:-tcp/127.0.0.1:7447}"
 ENDPOINT_SUB="${ENDPOINT_SUB:-tcp/127.0.0.1:7447}"
@@ -538,29 +539,9 @@ print_status() {
 aggregate_pub_csvs() {
 	local out_csv="$1"; shift
 	local csvs=("$@")
-	# Write header from first CSV
-	if [[ -f "${csvs[0]}" ]]; then
-		head -1 "${csvs[0]}" > "${out_csv}"
-	fi
-	# For simplicity, take last row from each and sum key metrics
-	# This gives an aggregate snapshot
-	local total_sent=0 total_err=0 total_tps=0
-	for pc in "${csvs[@]}"; do
-		if [[ -f "$pc" ]]; then
-			local last_row
-			last_row=$(tail -n +2 "$pc" | tail -1 || true)
-			if [[ -n "$last_row" ]]; then
-				IFS=, read -r ts sent pub_recv err tps itps p50 p95 p99 jit min max conns active <<<"$last_row"
-				total_sent=$((total_sent + ${sent:-0}))
-				total_err=$((total_err + ${err:-0}))
-				total_tps=$(awk "BEGIN{print ${total_tps} + ${tps:-0}}")
-			fi
-		fi
-	done
-	# Write aggregate row (use last timestamp from last CSV)
-	local ts
-	ts=$(tail -n +2 "${csvs[-1]}" 2>/dev/null | tail -1 | cut -d, -f1 || date +%s)
-	echo "${ts},${total_sent},0,${total_err},${total_tps},${total_tps},0,0,0,0,0,0,${PUBS},${PUBS}" >> "${out_csv}"
+	# Publisher CSVs use the same schema as subscriber CSVs, so reuse the
+	# full time-series aggregator instead of collapsing to a single final row.
+	aggregate_sub_csvs "${out_csv}" "${csvs[@]}"
 }
 
 # Wait for all publishers to exit

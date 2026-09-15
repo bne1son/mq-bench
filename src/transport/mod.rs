@@ -80,6 +80,15 @@ pub struct TransportMessage {
     pub payload: Payload,
 }
 
+/// Broker-confirmed information about a subscription connection. Transports
+/// that do not expose session resumption may leave this unavailable.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SubscriptionConnectionInfo {
+    pub client_id: String,
+    pub session_present: bool,
+    pub connected_at_ns: u64,
+}
+
 pub type QueryStream = Pin<Box<dyn Stream<Item = Result<IncomingQuery, TransportError>> + Send>>;
 
 #[derive(Debug)]
@@ -178,6 +187,13 @@ pub trait Transport: Send + Sync {
 #[async_trait::async_trait]
 pub trait Subscription: Send + Sync {
     async fn shutdown(&self) -> Result<(), TransportError>;
+    fn connection_info(&self) -> Option<SubscriptionConnectionInfo> {
+        None
+    }
+    /// Returns the first asynchronous connection failure observed after setup.
+    fn connection_failure(&self) -> Option<String> {
+        None
+    }
     /// Force-close the underlying connection without graceful disconnect.
     /// Used to simulate crashes - no DISCONNECT packet should be sent.
     async fn force_disconnect(&self) -> Result<(), TransportError> {
