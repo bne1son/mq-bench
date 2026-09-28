@@ -1,0 +1,65 @@
+nohup: ignoring input
+[17:53:44] Append phase offset: 1440s
+[17:53:44] Fan-out bursty-load benchmark -> /home/cc/hpcc/mq-bench/results/ben/non-mqtt
+[17:53:44] Resolved: SUMMARY_CSV=/home/cc/hpcc/mq-bench/results/ben/non-mqtt/raw_data/summary_by_phase.csv | PLOTS_DIR=/home/cc/hpcc/mq-bench/results/ben/non-mqtt/plots | RAW_DIR=/home/cc/hpcc/mq-bench/results/ben/non-mqtt/raw_data
+[17:53:44] Resolved payload=64B subs=1000 pubs=10 duration=1440s profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20,burst:60:1000,recovery:60:20,burst:60:2000,recovery:60:20,burst:60:4000,recovery:60:20,burst:60:6000,recovery:60:20,burst:60:8000,recovery:60:20,burst:60:10000,recovery:60:20
+[17:53:44] Inter-run cooldown: 120s (use --cooldown-sec N or --interval-sec N to override)
+Controlled fan-out configuration:
+Total subscribers: 1000
+Subscribers per publisher/topic: 100
+Publishers/topics: 10
+Effective fan-out ratio: 1:100
+Expected delivery target per phase:
+  warmup:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  baseline:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 50 msg/s/pub -> 50,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 100 msg/s/pub -> 100,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 200 msg/s/pub -> 200,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 300 msg/s/pub -> 300,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 500 msg/s/pub -> 500,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 1,000 msg/s/pub -> 1,000,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 2,000 msg/s/pub -> 2,000,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 4,000 msg/s/pub -> 4,000,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 6,000 msg/s/pub -> 6,000,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 8,000 msg/s/pub -> 8,000,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 10,000 msg/s/pub -> 10,000,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+[17:53:46] [remote] ubuntu@192.168.0.251: cd /home/ubuntu && docker compose down
+[17:53:57] [remote] ubuntu@192.168.0.251: cd /home/ubuntu && docker compose up -d router1
+ Network ubuntu_default Creating 
+ Network ubuntu_default Creating 
+ Network ubuntu_default Created 
+ Network ubuntu_default Created 
+ Container router1 Creating 
+ Container router1 Created 
+ Container router1 Starting 
+ Container router1 Started 
+[17:54:03] Waiting for 192.168.0.251:7447...
+[17:55:04] Timeout waiting for 192.168.0.251:7447
+[17:55:04] [remote] ubuntu@192.168.0.251: cd /home/ubuntu && docker compose down
+ Container router1 Stopping 
+ Container router1 Stopped 
+ Container router1 Removing 
+ Container router1 Removed 
+ Network ubuntu_default Removing 
+ Network ubuntu_default Removed 
+[17:55:05] Wrote phase-rate summary: /home/cc/hpcc/mq-bench/results/ben/non-mqtt/phase-rate-summary-append-20260928_175505.md
+[17:55:05] Plotting bursty fan-out results to /home/cc/hpcc/mq-bench/results/ben/non-mqtt/plots
+[plot] LaTeX mode enabled: PDF + PNG output, 300 DPI
+[plot] Latest-run filtering kept 24 of 24 summary rows
+[plot] Wrote plot points: /home/cc/hpcc/mq-bench/results/ben/non-mqtt/raw_data/plot_points.csv
+[plot] Auto/selected plot tuning: bucket_seconds=1, throughput window=5, marker_every=26; latency window=3, marker_every=29; resource window=5, marker_every=14
+[plot] Wrote plots to /home/cc/hpcc/mq-bench/results/ben/non-mqtt/plots
+[plot] Wrote gallery: /home/cc/hpcc/mq-bench/results/ben/non-mqtt/plots/README.md
+[17:55:13] Done. Phase summary CSV: /home/cc/hpcc/mq-bench/results/ben/non-mqtt/raw_data/summary_by_phase.csv
+[17:55:13] Experiment stopped early or failed; exiting with status 1 after plotting

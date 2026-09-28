@@ -1,0 +1,42 @@
+mq-bench starting with run_id: auto
+Writing CSV output to: artifacts/fanout_bursty_20260928_175835_mqtt_hivemq_p64_s1000_u10_bursty/fanout_singlesite/sub_5_8.csv
+2026-09-28T17:58:35.759429Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:58:35.759478Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:58:35.906867Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:58:42.427521Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:58:42.427612Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:58:42.434057Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:58:49.095007Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:58:49.095094Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:58:49.101448Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:58:55.762770Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:58:55.762856Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:58:55.766797Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:59:02.430084Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:59:02.430139Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:59:02.434608Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:59:09.097865Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:59:09.097903Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:59:09.101586Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:59:15.765816Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:59:15.765865Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:59:15.769237Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:59:22.433098Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:59:22.433143Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:59:22.435988Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:59:29.100868Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:59:29.100909Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:59:29.112246Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T17:59:35.767969Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_5 endpoint=None crash_enabled=false
+2026-09-28T17:59:35.768013Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-28T17:59:35.770968Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-28T18:09:50.770056Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-8fc183603a784ab3a8cc7a38a2d9377d error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.770910Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-5d76fba8fecb4c5d90d6d6e4a6075bd7 error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.772028Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-65595ec3c9a24f5d9c16101cce205da6 error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.772755Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-1a0401bb63fc4277a19c062f59d8564d error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.773503Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-125102923167461bb7f01b1bd10858a1 error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.774584Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-cd4a6090f97b4253923a0e96bcd4d006 error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.775337Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-8cc709e6b17f41a49a217a5e666b0876 error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.776412Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-b149cbbb247444d39c07f1f0aa500a81 error=Mqtt state: Mqtt serialization/deserialization error: IO: Connection reset by peer (os error 104)
+2026-09-28T18:09:50.777529Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-b410ab1ef1d84aeeb19133639c6d944f error=Mqtt state: Connection closed by peer abruptly
+2026-09-28T18:09:50.778581Z  WARN mq_bench::transport::mqtt: MQTT subscription eventloop error; continuing poll loop client_id=sub-mqb-5bfe12c8e69e3d1c-4a12197f27964ffead406bcefe87acc6 error=Mqtt state: Connection closed by peer abruptly
