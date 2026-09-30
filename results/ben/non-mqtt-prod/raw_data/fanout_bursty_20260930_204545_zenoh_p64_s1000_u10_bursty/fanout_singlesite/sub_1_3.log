@@ -1,0 +1,42 @@
+mq-bench starting with run_id: auto
+Writing CSV output to: artifacts/fanout_bursty_20260930_204545_zenoh_p64_s1000_u10_bursty/fanout_singlesite/sub_1_3.csv
+2026-09-30T20:45:45.255985Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:45:45.256311Z  INFO zenoh::net::runtime: Using ZID: 4bd9ed64855f93742358964e6f9e952c
+2026-09-30T20:45:45.257954Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:45:45.257999Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:45:51.924199Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:45:51.924443Z  INFO zenoh::net::runtime: Using ZID: eb8cbac130c9f17b3846015658364b8
+2026-09-30T20:45:51.926125Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:45:51.926194Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:45:58.592366Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:45:58.592619Z  INFO zenoh::net::runtime: Using ZID: 4958ef6e2709ebaf5a800c53267a05d2
+2026-09-30T20:45:58.594197Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:45:58.594273Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:46:05.259629Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:46:05.259765Z  INFO zenoh::net::runtime: Using ZID: 7ce9f78d177e38550b81114759920b98
+2026-09-30T20:46:05.261405Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:46:05.261464Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:46:11.926705Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:46:11.926964Z  INFO zenoh::net::runtime: Using ZID: ada0c1bda0a3b7fbb2d208b570ffc170
+2026-09-30T20:46:11.928590Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:46:11.928655Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:46:18.594399Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:46:18.594527Z  INFO zenoh::net::runtime: Using ZID: 4e69d715850de16484e2dff1603c39fe
+2026-09-30T20:46:18.596111Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:46:18.596175Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:46:25.262223Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:46:25.262367Z  INFO zenoh::net::runtime: Using ZID: 2d81129d9b75ad53ad3ffb0efb6faecb
+2026-09-30T20:46:25.264000Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:46:25.264061Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:46:31.929795Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:46:31.929986Z  INFO zenoh::net::runtime: Using ZID: b691722ae18e93d925a990fd095e933a
+2026-09-30T20:46:31.931588Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:46:31.931664Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:46:38.596807Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:46:38.596977Z  INFO zenoh::net::runtime: Using ZID: 48feda59ceb3040a4b6f58e20709aa8f
+2026-09-30T20:46:38.598556Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:46:38.598615Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1
+2026-09-30T20:46:45.264234Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Zenoh key=topic_1 endpoint=Some("tcp/192.168.0.251:7447") crash_enabled=false
+2026-09-30T20:46:45.264362Z  INFO zenoh::net::runtime: Using ZID: f5059156d0c87c2691c3567858547156
+2026-09-30T20:46:45.266987Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Zenoh
+2026-09-30T20:46:45.267049Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_1

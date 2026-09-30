@@ -1,0 +1,33 @@
+mq-bench starting with run_id: auto
+Writing CSV output to: artifacts/fanout_bursty_20260930_212347_nats_p64_s1000_u10_bursty/fanout_singlesite/pub_5.csv
+2026-09-30T21:24:49.354679Z  INFO mq_bench::roles::publisher: Starting publisher engine=Nats key=topic_5 payload_size=64 rate=None rate_profile=Some(RateProfile { phases: [RatePhase { name: "warmup", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "baseline", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 50.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 100.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 200.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 300.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 500.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 1000.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 2000.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 4000.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 6000.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 8000.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }, RatePhase { name: "burst", duration: 60s, rate_per_sec: 10000.0 }, RatePhase { name: "recovery", duration: 60s, rate_per_sec: 20.0 }], cumulative_ends: [60s, 120s, 180s, 240s, 300s, 360s, 420s, 480s, 540s, 600s, 660s, 720s, 780s, 840s, 900s, 960s, 1020s, 1080s, 1140s, 1200s, 1260s, 1320s, 1380s, 1440s] }) duration_secs=Some(1440) endpoint=None crash_enabled=false sequence_start=0 sequence_step=1
+2026-09-30T21:24:49.354742Z  INFO mq_bench::roles::publisher: Connected via transport engine=Nats
+2026-09-30T21:24:49.357251Z  INFO async_nats::connector: connected successfully server=4222 max_payload=10485760
+2026-09-30T21:24:49.357293Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=warmup rate=20.0 elapsed_secs=0.002570096
+2026-09-30T21:24:49.357296Z  INFO async_nats: event: connected
+2026-09-30T21:25:49.358968Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=baseline rate=20.0 elapsed_secs=60.004241402
+2026-09-30T21:26:49.360435Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=50.0 elapsed_secs=120.005710438
+2026-09-30T21:27:49.361189Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=180.006464622
+2026-09-30T21:28:49.362004Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=100.0 elapsed_secs=240.007280467
+2026-09-30T21:29:49.363568Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=300.008843406
+2026-09-30T21:30:49.364561Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=200.0 elapsed_secs=360.00983652
+2026-09-30T21:31:49.355259Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=420.00050864
+2026-09-30T21:32:49.356536Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=300.0 elapsed_secs=480.001811169
+2026-09-30T21:33:49.357424Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=540.002699851
+2026-09-30T21:34:49.358321Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=500.0 elapsed_secs=600.003596458
+2026-09-30T21:35:49.359421Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=660.004697063
+2026-09-30T21:36:49.360779Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=1000.0 elapsed_secs=720.006055485
+2026-09-30T21:37:49.361266Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=780.006541992
+2026-09-30T21:38:49.362403Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=2000.0 elapsed_secs=840.007678503
+2026-09-30T21:39:49.363682Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=900.008957238
+2026-09-30T21:40:49.364871Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=4000.0 elapsed_secs=960.010146599
+2026-09-30T21:41:49.356863Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=1020.002121456
+2026-09-30T21:42:49.358132Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=6000.0 elapsed_secs=1080.00340775
+2026-09-30T21:43:49.359154Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=1140.004415688
+2026-09-30T21:44:49.360510Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=8000.0 elapsed_secs=1200.005785362
+2026-09-30T21:45:49.361732Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=1260.007007294
+2026-09-30T21:46:49.362515Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=burst rate=10000.0 elapsed_secs=1320.007790097
+2026-09-30T21:47:49.363190Z  INFO mq_bench::roles::publisher: Publisher rate profile phase entered phase=recovery rate=20.0 elapsed_secs=1380.008465696
+2026-09-30T21:48:49.355175Z  INFO mq_bench::roles::publisher: Duration limit reached while waiting, stopping publisher
+2026-09-30T21:48:49.355535Z  INFO mq_bench::roles::publisher: Final Publisher Statistics sent=1944605 errors=0 crashes=0 reconnects=0 avg_rate="1350.42" duration="1440.00s"
+2026-09-30T21:48:49.355607Z  INFO async_nats: event: closed

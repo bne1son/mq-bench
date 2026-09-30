@@ -1,0 +1,32 @@
+mq-bench starting with run_id: auto
+Writing CSV output to: artifacts/fanout_bursty_20260930_030221_redis_p64_s1000_u10_bursty/fanout_singlesite/sub_5_4.csv
+2026-09-30T03:02:21.734269Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:02:21.734322Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:02:21.743114Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:02:28.401876Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:02:28.402014Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:02:28.402875Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:02:35.069783Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:02:35.069826Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:02:35.070621Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:02:41.737816Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:02:41.737912Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:02:41.738713Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:02:48.405645Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:02:48.405699Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:02:48.406523Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:02:55.073872Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:02:55.073952Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:02:55.074844Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:03:01.741497Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:03:01.741536Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:03:01.742345Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:03:08.409782Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:03:08.409832Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:03:08.410630Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:03:15.077184Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:03:15.077235Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:03:15.078092Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5
+2026-09-30T03:03:21.744315Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Redis key=topic_5 endpoint=None crash_enabled=false
+2026-09-30T03:03:21.744359Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Redis
+2026-09-30T03:03:21.745106Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_5

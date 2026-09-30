@@ -1,0 +1,814 @@
+nohup: ignoring input
+[20:23:53] Append phase offset: 0s
+[20:23:53] Fan-out bursty-load benchmark -> /home/cc/hpcc/mq-bench/results/ben/mqtt-prod
+[20:23:53] Resolved: SUMMARY_CSV=/home/cc/hpcc/mq-bench/results/ben/mqtt-prod/raw_data/summary_by_phase.csv | PLOTS_DIR=/home/cc/hpcc/mq-bench/results/ben/mqtt-prod/plots | RAW_DIR=/home/cc/hpcc/mq-bench/results/ben/mqtt-prod/raw_data
+[20:23:53] Resolved payload=64B subs=1000 pubs=10 duration=720s profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20
+[20:23:53] Inter-run cooldown: 120s (use --cooldown-sec N or --interval-sec N to override)
+Controlled fan-out configuration:
+Total subscribers: 1000
+Subscribers per publisher/topic: 100
+Publishers/topics: 10
+Effective fan-out ratio: 1:100
+Expected delivery target per phase:
+  warmup:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  baseline:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 50 msg/s/pub -> 50,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 100 msg/s/pub -> 100,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 200 msg/s/pub -> 200,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 300 msg/s/pub -> 300,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+  burst:60s rate 500 msg/s/pub -> 500,000 delivered msg/s
+  recovery:60s rate 20 msg/s/pub -> 20,000 delivered msg/s
+[20:23:55] [remote] ubuntu@192.168.0.251: cd /home/ubuntu && docker compose down
+[20:24:07] [remote] ubuntu@192.168.0.251: cd /home/ubuntu && docker compose up -d mosquitto
+ Network ubuntu_default Creating 
+ Network ubuntu_default Creating 
+ Network ubuntu_default Created 
+ Network ubuntu_default Created 
+ Container mosquitto Creating 
+ Container mosquitto Created 
+ Container mosquitto Starting 
+ Container mosquitto Started 
+[20:24:13] Waiting for 192.168.0.251:1883...
+[20:24:13] Port 192.168.0.251:1883 is open.
+[20:24:15] Starting remote stats collector on ubuntu@192.168.0.251 for 795s...
+[20:24:15] Run: transport=mqtt_mosquitto subs=1000 pubs=10 payload=64B profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20
+[run_fanout] Run ID: fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty | ENGINE=mqtt | PUBS=10 SUBS=1000 SUB_RAMP_UP_SECS=60 RATE_PROFILE=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20 DURATION=720s
+Starting 1000 subscribers across 10 controlled fan-out topics (100 per topic, 10 client process(es) per topic)
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_0.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_1.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_2.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_3.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_4.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_5.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_6.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_7.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_8.log 2>&1 &
+[sub] mqtt → topic_0 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_0 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_0_9.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_0.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_1.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_2.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_3.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_4.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_5.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_6.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_7.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_8.log 2>&1 &
+[sub] mqtt → topic_1 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_1 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_1_9.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_0.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_1.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_2.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_3.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_4.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_5.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_6.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_7.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_8.log 2>&1 &
+[sub] mqtt → topic_2 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_2 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_2_9.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_0.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_1.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_2.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_3.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_4.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_5.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_6.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_7.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_8.log 2>&1 &
+[sub] mqtt → topic_3 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_3 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_3_9.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_0.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_1.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_2.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_3.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_4.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_5.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_6.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_7.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_8.log 2>&1 &
+[sub] mqtt → topic_4 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_4 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_4_9.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_0.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_1.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_2.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_3.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_4.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_5.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_6.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_7.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_8.log 2>&1 &
+[sub] mqtt → topic_5 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_5 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_5_9.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_0.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_1.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_2.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_3.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_4.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_5.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_6.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_7.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_8.log 2>&1 &
+[sub] mqtt → topic_6 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_6 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_6_9.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_0.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_1.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_2.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_3.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_4.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_5.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_6.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_7.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_8.log 2>&1 &
+[sub] mqtt → topic_7 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_7 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_7_9.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_0.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_1.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_2.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_3.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_4.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_5.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_6.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_7.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_8.log 2>&1 &
+[sub] mqtt → topic_8 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_8 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_8_9.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_0.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_1.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_2.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_3.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_4.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_5.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_6.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_7.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_8.log 2>&1 &
+[sub] mqtt → topic_9 (subs=10, ramp_up=60s, fast_count=0, latency_sample_rate=1000)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 sub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --expr topic_9 --subscribers 10 --ramp-up-secs 60 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_9.log 2>&1 &
+[sub] Waiting 60s for subscriber ramp-up before starting publishers
+Running 10 controlled publishers across 10 topics (profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20)
+[pub] mqtt → topic_0 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_0 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_0.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_0.log 2>&1 &
+[pub] mqtt → topic_1 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_1 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_1.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_1.log 2>&1 &
+[pub] mqtt → topic_2 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_2 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_2.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_2.log 2>&1 &
+[pub] mqtt → topic_3 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_3 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_3.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_3.log 2>&1 &
+[pub] mqtt → topic_4 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_4 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_4.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_4.log 2>&1 &
+[pub] mqtt → topic_5 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_5 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_5.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_5.log 2>&1 &
+[pub] mqtt → topic_6 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_6 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_6.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_6.log 2>&1 &
+[pub] mqtt → topic_7 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_7 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_7.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_7.log 2>&1 &
+[pub] mqtt → topic_8 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_8 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_8.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_8.log 2>&1 &
+[pub] mqtt → topic_9 (payload=64, profile=warmup:60:20,baseline:60:20,burst:60:50,recovery:60:20,burst:60:100,recovery:60:20,burst:60:200,recovery:60:20,burst:60:300,recovery:60:20,burst:60:500,recovery:60:20, dur=720s)
+[cmd] ./target/release/mq-bench --snapshot-interval 1 pub --engine mqtt --connect host=192.168.0.251 --connect port=1883 --topic-prefix topic_9 --publishers 1 --payload 64 --rate-profile warmup:60:20\,baseline:60:20\,burst:60:50\,recovery:60:20\,burst:60:100\,recovery:60:20\,burst:60:200\,recovery:60:20\,burst:60:300\,recovery:60:20\,burst:60:500\,recovery:60:20 --duration 720 --csv artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_9.csv 
+       1>artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/pub_9.log 2>&1 &
+[watch] printing status every 1s...
+[status] PUB sent=20 tps=42797 (pubs=10) | SUB recv=0 itps=0 p99=0.00ms conn=0/0,0,0,1000,1000,1000,0,0,0,0,0,0,0,0,0,0,0
+[status] PUB sent=220 tps=220 (pubs=10) | SUB recv=16778 itps=15938.24 p99=3.25ms conn=68812799/6656582.67,13877814.45,16778,1000,1000,1000,0,0,0,0,0,0,2086908.04,56026872.61,59818007.67,6669566.27,15938
+[status] PUB sent=420 tps=210 (pubs=10) | SUB recv=36776 itps=18798.08 p99=2.89ms conn=68812799/4066636.84,9678032.41,36776,1000,1000,1000,0,0,0,0,0,0,1828433.96,3433622.55,3523865.61,1903806.22,18798
+[status] PUB sent=620 tps=207 (pubs=10) | SUB recv=56778 itps=18801.99 p99=2.80ms conn=68812799/3307442.55,7896002.81,56778,1000,1000,1000,0,0,0,0,0,0,1824389.03,3409066.45,3527128.39,1924343.74,18802
+[status] PUB sent=820 tps=205 (pubs=10) | SUB recv=85579 itps=7601.53 p99=2.79ms conn=68812799/2851572.56,6455881.01,85579,1000,1000,1000,0,0,0,0,0,0,1851360.83,3465379.34,3597025.16,1914842.25,7602
+[status] PUB sent=1220 tps=203 (pubs=10) | SUB recv=115577 itps=17599.52 p99=2.79ms conn=68812799/2626226.47,5621340.10,115577,1000,1000,1000,0,0,0,0,0,0,1873124.93,3472893.60,3596099.54,1972515.38,17600
+[status] PUB sent=1420 tps=203 (pubs=10) | SUB recv=136775 itps=18798.23 p99=2.79ms conn=68812799/2524158.02,5197915.40,136775,1000,1000,1000,0,0,0,0,0,0,1901875.59,3484696.06,3636905.12,1975990.79,18798
+[status] PUB sent=1620 tps=202 (pubs=10) | SUB recv=156777 itps=18802.33 p99=2.80ms conn=68812799/2453276.07,4870961.80,156777,1000,1000,1000,0,0,0,0,0,0,1942090.32,3490029.22,3688230.68,1973877.80,18802
+[status] PUB sent=1820 tps=202 (pubs=10) | SUB recv=176777 itps=18799.53 p99=2.79ms conn=68812799/2395161.70,4601269.24,176777,1000,1000,1000,0,0,0,0,0,0,1900108.78,3468817.95,3568265.24,1952224.54,18800
+[status] PUB sent=2020 tps=202 (pubs=10) | SUB recv=197777 itps=19801.22 p99=2.79ms conn=68812799/2353570.11,4376098.60,197777,1000,1000,1000,0,0,0,0,0,0,1959205.89,3505634.35,4233871.19,2015017.63,19800
+[status] PUB sent=2220 tps=202 (pubs=10) | SUB recv=228573 itps=10597.58 p99=2.78ms conn=68812799/2296711.39,4083444.49,228573,1000,1000,1000,0,0,0,0,0,0,1825898.94,3405890.26,3444993.20,1917706.56,10597
+[status] PUB sent=2620 tps=202 (pubs=10) | SUB recv=256777 itps=18802.98 p99=2.78ms conn=68812799/2260144.70,3882556.26,256777,1000,1000,1000,0,0,0,0,0,0,1912929.63,3433829.83,3509796.44,1980112.57,18803
+[status] PUB sent=2820 tps=201 (pubs=10) | SUB recv=276767 itps=18790.17 p99=2.78ms conn=68812799/2238771.61,3750363.46,276767,1000,1000,1000,0,0,0,0,0,0,1920687.46,3525587.40,4013021.21,1969270.23,18790
+[status] PUB sent=3020 tps=201 (pubs=10) | SUB recv=296778 itps=18810.23 p99=2.78ms conn=68812799/2222145.72,3631581.36,296778,1000,1000,1000,0,0,0,0,0,0,1934121.66,3515071.30,3858293.82,1998907.92,18811
+[status] PUB sent=3220 tps=201 (pubs=10) | SUB recv=316777 itps=18799.34 p99=2.78ms conn=68812799/2202766.03,3534431.15,316777,1000,1000,1000,0,0,0,0,0,0,1841523.36,3382852.70,3572458.56,1922617.25,18799
+[status] PUB sent=3420 tps=201 (pubs=10) | SUB recv=347176 itps=9196.83 p99=2.78ms conn=68812799/2175933.29,3386679.09,347176,1000,1000,1000,0,0,0,0,0,0,1894805.73,3490494.90,3556298.11,1958291.31,9197
+[status] PUB sent=3820 tps=201 (pubs=10) | SUB recv=376776 itps=18800.18 p99=2.78ms conn=68812799/2161089.26,3265659.21,376776,1000,1000,1000,0,0,0,0,0,0,1914875.30,3507043.77,3737401.50,1984325.56,18800
+[status] PUB sent=4020 tps=201 (pubs=10) | SUB recv=396779 itps=18803.12 p99=2.78ms conn=68812799/2151468.48,3198347.10,396779,1000,1000,1000,0,0,0,0,0,0,1893170.01,3467085.68,3557923.08,1981894.31,18803
+[status] PUB sent=4220 tps=201 (pubs=10) | SUB recv=416775 itps=18796.56 p99=2.78ms conn=68812799/2143320.18,3128257.89,416775,1000,1000,1000,0,0,0,0,0,0,1963384.11,3520499.01,3668889.12,1995438.15,18796
+[status] PUB sent=4420 tps=201 (pubs=10) | SUB recv=436781 itps=18805.11 p99=2.78ms conn=68812799/2134671.39,3063042.79,436781,1000,1000,1000,0,0,0,0,0,0,1886857.69,3494564.69,3580713.12,1966413.50,18806
+[status] PUB sent=4620 tps=201 (pubs=10) | SUB recv=464580 itps=6604.02 p99=2.78ms conn=68812799/2127305.43,2987898.62,464580,1000,1000,1000,0,0,0,0,0,0,1827918.39,3455367.61,3690245.05,1903707.09,6604
+[status] PUB sent=5020 tps=201 (pubs=10) | SUB recv=496779 itps=18800.21 p99=2.78ms conn=68812799/2116771.65,2902608.97,496779,1000,1000,1000,0,0,0,0,0,0,1954506.17,3468633.42,3942551.95,1979317.95,18800
+[status] PUB sent=5220 tps=201 (pubs=10) | SUB recv=516778 itps=18798.89 p99=2.78ms conn=68812799/2111357.69,2860196.71,516778,1000,1000,1000,0,0,0,0,0,0,1894365.23,3450756.00,3586081.86,1988488.05,18799
+[status] PUB sent=5420 tps=201 (pubs=10) | SUB recv=536771 itps=18792.72 p99=2.78ms conn=68812799/2105294.25,2812875.91,536771,1000,1000,1000,0,0,0,0,0,0,1916430.72,3464596.67,3630146.40,1958598.56,18793
+[status] PUB sent=5620 tps=201 (pubs=10) | SUB recv=556773 itps=18802.66 p99=2.78ms conn=68812799/2101949.30,2769070.51,556773,1000,1000,1000,0,0,0,0,0,0,2023731.04,3503794.02,4678011.80,2029290.25,18802
+[status] PUB sent=5820 tps=201 (pubs=10) | SUB recv=589576 itps=11598.83 p99=2.78ms conn=68812799/2093388.59,2708603.30,589576,1000,1000,1000,0,0,0,0,0,0,1870786.35,3505686.44,4246111.63,2016985.71,11599
+[status] PUB sent=6220 tps=201 (pubs=10) | SUB recv=616777 itps=18800.89 p99=2.78ms conn=68812799/2092668.87,2665553.70,616777,1000,1000,1000,0,0,0,0,0,0,1956957.56,3928273.90,5161949.23,2035965.44,18800
+[status] PUB sent=6420 tps=201 (pubs=10) | SUB recv=636776 itps=18799.04 p99=2.78ms conn=68812799/2087778.46,2629068.46,636776,1000,1000,1000,0,0,0,0,0,0,1855837.14,3457537.42,3505918.22,1947174.33,18799
+[status] PUB sent=6619 tps=201 (pubs=10) | SUB recv=656778 itps=18802.35 p99=2.78ms conn=68812799/2085585.72,2600936.37,656778,1000,1000,1000,0,0,0,0,0,0,1956536.77,3568007.35,4340137.44,2033702.83,18802
+[status] PUB sent=6820 tps=201 (pubs=10) | SUB recv=684576 itps=6601.27 p99=2.78ms conn=68812799/2080249.18,2554330.95,684576,1000,1000,1000,0,0,0,0,0,0,1982956.00,3496685.20,4073019.58,1972413.51,6601
+[status] PUB sent=7220 tps=201 (pubs=10) | SUB recv=716777 itps=18799.73 p99=2.78ms conn=68812799/2074940.41,2512013.33,716777,1000,1000,1000,0,0,0,0,0,0,1939125.12,3422915.99,3886255.21,1994436.42,18799
+[status] PUB sent=7420 tps=200 (pubs=10) | SUB recv=736776 itps=18799.46 p99=2.78ms conn=68812799/2071554.31,2482685.92,736776,1000,1000,1000,0,0,0,0,0,0,1932838.25,3397813.37,3502021.15,1957420.99,18799
+[status] PUB sent=7620 tps=200 (pubs=10) | SUB recv=756772 itps=18794.92 p99=2.78ms conn=68812799/2068207.63,2454679.54,756772,1000,1000,1000,0,0,0,0,0,0,1888078.76,3464724.36,3548245.30,1955302.53,18796
+[status] PUB sent=7820 tps=200 (pubs=10) | SUB recv=780576 itps=2600.72 p99=2.78ms conn=68812799/2064102.57,2423419.86,780576,1000,1000,1000,0,0,0,0,0,0,1826052.81,3317466.88,3441471.27,1915469.16,2601
+[status] PUB sent=8220 tps=200 (pubs=10) | SUB recv=815574 itps=17599.07 p99=2.78ms conn=68812799/2059691.48,2384285.45,815574,1000,1000,1000,0,0,0,0,0,0,1865797.87,3486020.02,3666684.37,1945142.85,17599
+[status] PUB sent=8420 tps=200 (pubs=10) | SUB recv=836776 itps=18801.89 p99=2.78ms conn=68812799/2058920.93,2360360.54,836776,1000,1000,1000,0,0,0,0,0,0,2036720.30,3545410.72,4598228.79,2041669.07,18802
+[status] PUB sent=8620 tps=200 (pubs=10) | SUB recv=856777 itps=18801.11 p99=2.78ms conn=68812799/2056187.89,2342897.70,856777,1000,1000,1000,0,0,0,0,0,0,1897449.43,3415563.66,4590584.63,1956259.13,18801
+[status] PUB sent=8820 tps=200 (pubs=10) | SUB recv=878575 itps=600.05 p99=2.78ms conn=68812799/2051795.11,2318666.77,878575,1000,1000,1000,0,0,0,0,0,0,1830228.33,3259732.33,3531433.67,1848703.79,600
+[status] PUB sent=9220 tps=200 (pubs=10) | SUB recv=913380 itps=15403.03 p99=2.78ms conn=68812799/2046963.42,2288073.82,913380,1000,1000,1000,0,0,0,0,0,0,1796798.96,3442203.55,4044273.27,1915564.35,15403
+[status] PUB sent=9420 tps=200 (pubs=10) | SUB recv=936765 itps=18785.58 p99=2.78ms conn=68812799/2043503.94,2266143.39,936765,1000,1000,1000,0,0,0,0,0,0,1844135.24,3469138.53,3820568.57,1912160.30,18785
+[status] PUB sent=9620 tps=200 (pubs=10) | SUB recv=956773 itps=18807.84 p99=2.78ms conn=68812799/2046277.69,2254299.37,956773,1000,1000,1000,0,0,0,0,0,0,1969674.87,5196313.13,6809811.66,2190804.43,18808
+[status] PUB sent=9820 tps=200 (pubs=10) | SUB recv=976972 itps=18998.13 p99=2.78ms conn=68812799/2045437.95,2238245.89,976972,1000,1000,1000,0,0,0,0,0,0,1910150.51,3631955.88,5519635.93,1999724.16,18999
+[status] PUB sent=10220 tps=200 (pubs=10) | SUB recv=1012777 itps=14802.05 p99=2.78ms conn=68812799/2042446.16,2212699.59,1012777,1000,1000,1000,0,0,0,0,0,0,1859145.95,3437046.60,4702311.32,1928659.10,14803
+[status] PUB sent=10420 tps=200 (pubs=10) | SUB recv=1036762 itps=18786.50 p99=2.78ms conn=68812799/2039234.47,2193244.93,1036762,1000,1000,1000,0,0,0,0,0,0,1895326.30,3429771.06,4349334.72,1928688.94,18786
+[status] PUB sent=10620 tps=200 (pubs=10) | SUB recv=1056791 itps=18827.56 p99=2.77ms conn=68812799/2027257.95,2185590.76,1056791,1000,1000,1000,0,0,0,0,0,0,922628.03,3588989.29,5068186.31,1406766.22,18829
+[status] PUB sent=10820 tps=200 (pubs=10) | SUB recv=1077774 itps=19783.89 p99=2.77ms conn=68812799/2017595.77,2169688.81,1077774,1000,1000,1000,0,0,0,0,0,0,1229106.57,3387047.30,3656441.45,1550268.01,19783
+[status] PUB sent=11220 tps=200 (pubs=10) | SUB recv=1114175 itps=16198.72 p99=2.77ms conn=68812799/2008615.59,2145842.64,1114175,1000,1000,1000,0,0,0,0,0,0,1204245.70,3448905.09,3604006.13,1623236.58,16198
+[status] PUB sent=11420 tps=200 (pubs=10) | SUB recv=1136772 itps=18796.28 p99=2.76ms conn=68812799/2001096.08,2132970.27,1136772,1000,1000,1000,0,0,0,0,0,0,1148193.96,3831110.90,5348889.94,1628156.16,18797
+[status] PUB sent=11619 tps=200 (pubs=10) | SUB recv=1156787 itps=18815.68 p99=2.76ms conn=68812799/1991428.08,2120298.54,1156787,1000,1000,1000,0,0,0,0,0,0,1023991.79,3460040.52,4408636.46,1451569.51,18815
+[status] PUB sent=11819 tps=200 (pubs=10) | SUB recv=1182589 itps=4600.09 p99=2.75ms conn=68812799/1977809.32,2106246.66,1182589,1000,1000,1000,0,0,0,0,0,0,985176.04,3227468.91,3867335.35,1448671.65,4600
+[status] PUB sent=12230 tps=200 (pubs=10) | SUB recv=1218752 itps=20642.89 p99=2.75ms conn=68812799/1984698.30,2108443.22,1218752,1000,1000,1000,0,0,0,0,0,0,2127593.71,8254616.43,9112516.61,2702043.52,20643
+[status] PUB sent=12431 tps=201 (pubs=10) | SUB recv=1238752 itps=18800.98 p99=2.76ms conn=68812799/1984046.58,2095088.93,1238752,1000,1000,1000,0,0,0,0,0,0,1913234.59,3483732.95,3758068.00,1958733.31,18801
+[status] PUB sent=12630 tps=200 (pubs=10) | SUB recv=1258758 itps=18806.11 p99=2.75ms conn=68812799/1974147.01,2087488.94,1258758,1000,1000,1000,0,0,0,0,0,0,975098.63,3152760.45,3622908.60,1357642.13,18805
+[status] PUB sent=12832 tps=201 (pubs=10) | SUB recv=1290151 itps=10200.60 p99=2.75ms conn=68812799/1972534.08,2067798.67,1290151,1000,1000,1000,0,0,0,0,0,0,1953779.35,3534027.00,3694292.63,2005236.84,10200
+[status] PUB sent=13231 tps=201 (pubs=10) | SUB recv=1318759 itps=18804.13 p99=2.75ms conn=68812799/1971048.01,2054301.83,1318759,1000,1000,1000,0,0,0,0,0,0,1755862.99,3425365.53,3620917.34,1885399.17,18805
+[status] PUB sent=13431 tps=200 (pubs=10) | SUB recv=1338749 itps=18790.47 p99=2.74ms conn=68812799/1964389.70,2042835.60,1338749,1000,1000,1000,0,0,0,0,0,0,1300102.15,3298376.14,3611677.41,1539791.91,18790
+[status] PUB sent=13632 tps=200 (pubs=10) | SUB recv=1360953 itps=1000.20 p99=2.74ms conn=68812799/1963981.91,2029633.67,1360953,1000,1000,1000,0,0,0,0,0,0,1816984.60,3344792.60,3444735,1889767.17,1000
+[status] PUB sent=14032 tps=200 (pubs=10) | SUB recv=1398753 itps=18795.62 p99=2.74ms conn=68812799/1965130.58,2013055.87,1398753,1000,1000,1000,0,0,0,0,0,0,1898015.88,3441279.43,3654127.94,1985416.11,18797
+[status] PUB sent=14230 tps=200 (pubs=10) | SUB recv=1418753 itps=18798.86 p99=2.74ms conn=68812799/1965332.73,2002161.71,1418753,1000,1000,1000,0,0,0,0,0,0,1938299.45,3489821.61,3641420.35,1991026.17,18799
+[status] PUB sent=14430 tps=200 (pubs=10) | SUB recv=1438754 itps=18801.35 p99=2.74ms conn=68812799/1965098.01,1991516.63,1438754,1000,1000,1000,0,0,0,0,0,0,1912901.75,3429885.07,3717771.38,1958701.07,18801
+[status] PUB sent=14831 tps=200 (pubs=10) | SUB recv=1471555 itps=11598.65 p99=2.74ms conn=68812799/1965175.19,1977325.50,1471555,1000,1000,1000,0,0,0,0,0,0,1921052.13,3499205.20,3627581.90,1981757.52,11599
+[status] PUB sent=15031 tps=200 (pubs=10) | SUB recv=1498754 itps=18801.92 p99=2.74ms conn=68812799/1964874.25,1963792.31,1498754,1000,1000,1000,0,0,0,0,0,0,1920654.92,3430532.88,3556168.71,1952869.90,18801
+[status] PUB sent=15231 tps=200 (pubs=10) | SUB recv=1518753 itps=18798.89 p99=2.74ms conn=68812799/1965327.45,1957783.57,1518753,1000,1000,1000,0,0,0,0,0,0,1958371.85,3450095.05,3924736.46,2011364.79,18799
+[status] PUB sent=15431 tps=200 (pubs=10) | SUB recv=1544753 itps=4801.39 p99=2.74ms conn=68812799/1964817.76,1945314.41,1544753,1000,1000,1000,0,0,0,0,0,0,1834493.51,3365639.21,3440973.37,1872221.39,4802
+[status] PUB sent=15831 tps=200 (pubs=10) | SUB recv=1578756 itps=18802.93 p99=2.74ms conn=68812799/1964075.30,1929976.98,1578756,1000,1000,1000,0,0,0,0,0,0,1878066.36,3460701.84,3612993.29,1924485.58,18803
+[status] PUB sent=16031 tps=200 (pubs=10) | SUB recv=1598755 itps=18798.57 p99=2.74ms conn=68812799/1963872.36,1924505.11,1598755,1000,1000,1000,0,0,0,0,0,0,1877953.55,3431486.52,3593044.06,1960002.55,18798
+[status] PUB sent=16232 tps=200 (pubs=10) | SUB recv=1618754 itps=18798.30 p99=2.74ms conn=68812799/1963380.17,1915697.66,1618754,1000,1000,1000,0,0,0,0,0,0,1884227.63,3459868.56,3636654.79,1935034.37,18799
+[status] PUB sent=16631 tps=200 (pubs=10) | SUB recv=1658157 itps=18200.32 p99=2.74ms conn=68812799/1962483.61,1902527.76,1658157,1000,1000,1000,0,0,0,0,0,0,1849079.98,3411984.78,3581042.62,1944593.88,18201
+[status] PUB sent=16831 tps=200 (pubs=10) | SUB recv=1678753 itps=18795.55 p99=2.74ms conn=68812799/1962536.21,1894180.46,1678753,1000,1000,1000,0,0,0,0,0,0,1932649.13,3504234.98,3844177.26,1977704.72,18796
+[status] PUB sent=17031 tps=200 (pubs=10) | SUB recv=1698760 itps=18807.83 p99=2.74ms conn=68812799/1955304.91,1886950.39,1698760,1000,1000,1000,0,0,0,0,0,0,989858.15,3234820.72,3536937.25,1348350.11,18807
+[status] PUB sent=17430 tps=200 (pubs=10) | SUB recv=1734953 itps=15000.26 p99=2.74ms conn=68812799/1955225.84,1876238.73,1734953,1000,1000,1000,0,0,0,0,0,0,1869882.53,3468738.24,3607565.34,1937236.92,15000
+[status] PUB sent=17632 tps=200 (pubs=10) | SUB recv=1758756 itps=18801.18 p99=2.74ms conn=68812799/1954946.11,1867161.50,1758756,1000,1000,1000,0,0,0,0,0,0,1910894.76,3489020.25,3668312.51,1961833.24,18802
+[status] PUB sent=17833 tps=200 (pubs=10) | SUB recv=1778757 itps=18801.24 p99=2.74ms conn=68812799/1954326.57,1859527.68,1778757,1000,1000,1000,0,0,0,0,0,0,1855744.62,3458285.83,3610697.40,1911737.12,18801
+[status] PUB sent=18230 tps=200 (pubs=10) | SUB recv=1813356 itps=13402.19 p99=2.74ms conn=68812799/1954041.89,1852954.08,1813356,1000,1000,1000,0,0,0,0,0,0,1858660.69,3441295.28,3609885.27,1913862.51,13403
+[status] PUB sent=18431 tps=200 (pubs=10) | SUB recv=1838754 itps=18801.47 p99=2.74ms conn=68812799/1953659.23,1843857.70,1838754,1000,1000,1000,0,0,0,0,0,0,1881482.87,3463609.17,3614222.47,1933139.20,18800
+[status] PUB sent=18631 tps=200 (pubs=10) | SUB recv=1858755 itps=18799.78 p99=2.74ms conn=68812799/1953657.21,1839940.18,1858755,1000,1000,1000,0,0,0,0,0,0,1891828.95,3428013.42,3654017.27,1969849.61,18801
+[status] PUB sent=19030 tps=200 (pubs=10) | SUB recv=1892756 itps=12802.33 p99=2.74ms conn=68812799/1953400.24,1828173.46,1892756,1000,1000,1000,0,0,0,0,0,0,1960227.75,3541298.95,4179935.80,1989820.04,12802
+[status] PUB sent=19231 tps=200 (pubs=10) | SUB recv=1918757 itps=18798.92 p99=2.74ms conn=68812799/1953111.31,1821795.09,1918757,1000,1000,1000,0,0,0,0,0,0,1883984.86,3417477.83,3676616.67,1951403.68,18799
+[status] PUB sent=19430 tps=200 (pubs=10) | SUB recv=1938750 itps=18795.22 p99=2.74ms conn=68812799/1952835.31,1815128.54,1938750,1000,1000,1000,0,0,0,0,0,0,1894152.78,3472844.82,3624457.08,1938353.33,18794
+[status] PUB sent=19831 tps=200 (pubs=10) | SUB recv=1973156 itps=13201.21 p99=2.74ms conn=68812799/1952114.18,1803764.63,1973156,1000,1000,1000,0,0,0,0,0,0,1868868.50,3467816.23,3585423.96,1924658.68,13201
+[status] PUB sent=20031 tps=200 (pubs=10) | SUB recv=1998756 itps=18800.92 p99=2.74ms conn=68812799/1952006.82,1798800.48,1998756,1000,1000,1000,0,0,0,0,0,0,1893358.66,3444149.50,3682352.67,1969476.27,18801
+[status] PUB sent=20230 tps=200 (pubs=10) | SUB recv=2018754 itps=18796.70 p99=2.74ms conn=68812799/1951658.10,1792533.17,2018754,1000,1000,1000,0,0,0,0,0,0,1878420.72,3445174.28,3631389.97,1927143.47,18798
+[status] PUB sent=20632 tps=200 (pubs=10) | SUB recv=2054749 itps=14795.13 p99=2.74ms conn=68812799/1951464.85,1783581.42,2054749,1000,1000,1000,0,0,0,0,0,0,1895834.30,3475587.19,3659544.26,1981794.66,14796
+[status] PUB sent=20831 tps=200 (pubs=10) | SUB recv=2078752 itps=18802.72 p99=2.74ms conn=68812799/1951029.08,1776920.94,2078752,1000,1000,1000,0,0,0,0,0,0,1859181.61,3438123.39,3608771.61,1922490.32,18802
+[status] PUB sent=21030 tps=200 (pubs=10) | SUB recv=2098754 itps=18801.02 p99=2.74ms conn=68812799/1951082.47,1771088.12,2098754,1000,1000,1000,0,0,0,0,0,0,1910980.37,3515944.34,3687255.04,1969368.59,18802
+[status] PUB sent=21431 tps=200 (pubs=10) | SUB recv=2137555 itps=17600.16 p99=2.74ms conn=68812799/1950744.83,1762857.76,2137555,1000,1000,1000,0,0,0,0,0,0,1908826.29,3459726.01,3680042.40,1940610.07,17600
+[status] PUB sent=21632 tps=200 (pubs=10) | SUB recv=2158756 itps=18801.70 p99=2.74ms conn=68812799/1950527.80,1756951.36,2158756,1000,1000,1000,0,0,0,0,0,0,1890972.89,3451243.35,3616557.97,1938364.31,18802
+[status] PUB sent=21830 tps=200 (pubs=10) | SUB recv=2178757 itps=18799.85 p99=2.74ms conn=68812799/1950253.00,1751409.70,2178757,1000,1000,1000,0,0,0,0,0,0,1874689.61,3456003.47,3632029.28,1932148.05,18800
+[status] PUB sent=22231 tps=200 (pubs=10) | SUB recv=2218752 itps=18796.14 p99=2.74ms conn=68812799/1950059.15,1743530.18,2218752,1000,1000,1000,0,0,0,0,0,0,1888569.89,3461249.10,3648531.48,1938266.90,18796
+[status] PUB sent=22433 tps=200 (pubs=10) | SUB recv=2238752 itps=18798.92 p99=2.74ms conn=68812799/1949798.91,1738189.30,2238752,1000,1000,1000,0,0,0,0,0,0,1882318.43,3453007.94,3601109.53,1934922.58,18799
+[status] PUB sent=22631 tps=200 (pubs=10) | SUB recv=2262153 itps=2199.22 p99=2.74ms conn=68812799/1949534.96,1734727.32,2262153,1000,1000,1000,0,0,0,0,0,0,1779697.50,3330398.11,3394256.78,1843633.04,2199
+[status] PUB sent=23030 tps=200 (pubs=10) | SUB recv=2298750 itps=18797.12 p99=2.74ms conn=68812799/1949363.97,1725456.82,2298750,1000,1000,1000,0,0,0,0,0,0,1886769.96,3456048.41,3596162.47,1933039.20,18797
+[status] PUB sent=23231 tps=200 (pubs=10) | SUB recv=2318759 itps=18807.39 p99=2.74ms conn=68812799/1949690.02,1723628.37,2318759,1000,1000,1000,0,0,0,0,0,0,1907188.00,3542590.16,4605112.66,1998953.75,18808
+[status] PUB sent=23630 tps=200 (pubs=10) | SUB recv=2349160 itps=9201.08 p99=2.74ms conn=68812799/1949741.19,1716787.11,2349160,1000,1000,1000,0,0,0,0,0,0,1827181.82,3462538.42,3750925.13,1902548.55,9201
+[status] PUB sent=23830 tps=200 (pubs=10) | SUB recv=2378757 itps=18800.66 p99=2.74ms conn=68812799/1949444.90,1709701.97,2378757,1000,1000,1000,0,0,0,0,0,0,1872802.90,3427844.17,3795354.19,1922459.73,18802
+[status] PUB sent=24032 tps=200 (pubs=10) | SUB recv=2398752 itps=18795.19 p99=2.74ms conn=68812799/1949620.83,1710554.03,2398752,1000,1000,1000,0,0,0,0,0,0,1843105.07,3404588.64,3640459.95,1978053.20,18795
+[status] PUB sent=25050 tps=205 (pubs=10) | SUB recv=2491596 itps=44987.57 p99=2.72ms conn=68812799/1953942.51,1844424.94,2491596,1000,1000,1000,0,0,0,0,0,0,1038763.73,1819300.86,2246014.90,1058082.84,44988
+[status] PUB sent=25550 tps=208 (pubs=10) | SUB recv=2543606 itps=47016.85 p99=2.71ms conn=68812799/1938897.33,1842961.94,2543606,1000,1000,1000,0,0,0,0,0,0,1068948.88,1865317.34,2818899.24,1174846.35,47016
+[status] PUB sent=26050 tps=210 (pubs=10) | SUB recv=2600604 itps=4000.64 p99=2.70ms conn=68812799/1922479.70,1828080.49,2600604,1000,1000,1000,0,0,0,0,0,0,1128182.75,2098529.47,2292169.64,1165133.95,4001
+[status] PUB sent=27050 tps=215 (pubs=10) | SUB recv=2693610 itps=47002.96 p99=2.67ms conn=68812799/1895400.29,1816234.40,2693610,1000,1000,1000,0,0,0,0,0,0,1047958.41,1882038.12,2185450.75,1144991.74,47001
+[status] PUB sent=27550 tps=217 (pubs=10) | SUB recv=2743599 itps=46993.10 p99=2.65ms conn=68812799/1881658.65,1804160.30,2743599,1000,1000,1000,0,0,0,0,0,0,1084913.72,1854193.26,2170230.19,1096470.06,46993
+[status] PUB sent=28550 tps=221 (pubs=10) | SUB recv=2827114 itps=30557.55 p99=2.62ms conn=68812799/1886679.11,1912375.00,2827114,1000,1000,1000,0,0,0,0,0,0,1127289.26,2026262.47,3255247.11,1171753.01,30557
+[status] PUB sent=29050 tps=224 (pubs=10) | SUB recv=2893601 itps=46984.37 p99=2.59ms conn=68812799/1872013.94,1905864.54,2893601,1000,1000,1000,0,0,0,0,0,0,1138000.52,2099134.73,5196805.17,1296032.03,46985
+[status] PUB sent=29550 tps=226 (pubs=10) | SUB recv=2943608 itps=47001.49 p99=2.57ms conn=68812799/1859592.44,1893613.52,2943608,1000,1000,1000,0,0,0,0,0,0,1085745.84,1848785.61,2439566.58,1101821.94,47005
+[status] PUB sent=30550 tps=230 (pubs=10) | SUB recv=3043610 itps=47000.17 p99=2.53ms conn=68812799/1837276.81,1878704.38,3043610,1000,1000,1000,0,0,0,0,0,0,1072017.41,1814334.77,2075043.86,1158970.71,47000
+[status] PUB sent=31050 tps=232 (pubs=10) | SUB recv=3093615 itps=47003 p99=2.51ms conn=68812799/1826133.40,1866949.77,3093615,1000,1000,1000,0,0,0,0,0,0,1119891.83,1955305.17,2188800.37,1134865.59,47002
+[status] PUB sent=32050 tps=236 (pubs=10) | SUB recv=3173101 itps=26488.75 p99=2.49ms conn=68812799/1808630.87,1853879.81,3173101,1000,1000,1000,0,0,0,0,0,0,1042398.45,1858377.88,2111237.73,1133796.88,26488
+[status] PUB sent=32550 tps=238 (pubs=10) | SUB recv=3243601 itps=47005.97 p99=2.47ms conn=68812799/1794346.73,1841890.10,3243601,1000,1000,1000,0,0,0,0,0,0,1087558.88,1887663.42,2185587.73,1100626.73,47006
+[status] PUB sent=33050 tps=240 (pubs=10) | SUB recv=3293607 itps=47001.38 p99=2.46ms conn=68812799/1784169.91,1830943.08,3293607,1000,1000,1000,0,0,0,0,0,0,1076223.39,1928726.45,2239607.63,1094620.05,47001
+[status] PUB sent=34050 tps=243 (pubs=10) | SUB recv=3393595 itps=47007.06 p99=2.43ms conn=68812799/1765208.82,1818551.86,3393595,1000,1000,1000,0,0,0,0,0,0,1059180.49,1873127.74,2211229.53,1154094.61,47007
+[status] PUB sent=34550 tps=245 (pubs=10) | SUB recv=3443610 itps=47007.09 p99=2.42ms conn=68812799/1756786.00,1807979.31,3443610,1000,1000,1000,0,0,0,0,0,0,1129429.76,1866738.78,2112176.10,1137497.91,47008
+[status] PUB sent=35550 tps=249 (pubs=10) | SUB recv=3531611 itps=35000.25 p99=2.41ms conn=68812799/1743195.84,1796243.24,3531611,1000,1000,1000,0,0,0,0,0,0,1082059.69,1963406.14,2272229.05,1183049.00,34999
+[status] PUB sent=36050 tps=250 (pubs=10) | SUB recv=3593606 itps=47497.05 p99=2.39ms conn=68812799/1733484.65,1785906.99,3593606,1000,1000,1000,0,0,0,0,0,0,1116446.93,1962799.78,2302806.56,1134157.30,47499
+[status] PUB sent=36550 tps=252 (pubs=10) | SUB recv=3652088 itps=5497.31 p99=2.38ms conn=68812799/1724334.63,1775969.21,3652088,1000,1000,1000,0,0,0,0,0,0,1249933.29,1956465.92,2088469.16,1333497.84,5498
+[status] PUB sent=37550 tps=255 (pubs=10) | SUB recv=3743601 itps=47009.77 p99=2.35ms conn=68812799/1711163.30,1765319.27,3743601,1000,1000,1000,0,0,0,0,0,0,1142572.00,1885011.99,2133000.54,1147080.38,47011
+[status] PUB sent=38050 tps=257 (pubs=10) | SUB recv=3793592 itps=46988.33 p99=2.33ms conn=68812799/1704034.74,1755984.90,3793592,1000,1000,1000,0,0,0,0,0,0,1109505.60,1913025.71,2222149.26,1124536.76,46989
+[status] PUB sent=39050 tps=260 (pubs=10) | SUB recv=3893611 itps=46997.84 p99=2.30ms conn=68812799/1691177.37,1753989.82,3893611,1000,1000,1000,0,0,0,0,0,0,1096037.96,1964977.10,2361496.98,1262418.05,46996
+[status] PUB sent=39550 tps=262 (pubs=10) | SUB recv=3943604 itps=46991.43 p99=2.29ms conn=68812799/1690188.71,1776347.39,3943604,1000,1000,1000,0,0,0,0,0,0,1111797.77,2648018.74,22190004.96,1592770.35,46993
+[status] PUB sent=40550 tps=265 (pubs=10) | SUB recv=4031104 itps=34503.84 p99=2.26ms conn=68812799/1678399.46,1766510.59,4031104,1000,1000,1000,0,0,0,0,0,0,1035523.61,1861825.41,2166834.61,1136983.59,34505
+[status] PUB sent=41050 tps=267 (pubs=10) | SUB recv=4093607 itps=47006.06 p99=2.25ms conn=68812799/1670645.68,1757310.30,4093607,1000,1000,1000,0,0,0,0,0,0,1092844.72,1942135.90,2185088.84,1109285.26,47005
+[status] PUB sent=42050 tps=270 (pubs=10) | SUB recv=4156105 itps=9501.81 p99=2.23ms conn=68812799/1663112.44,1748298.47,4156105,1000,1000,1000,0,0,0,0,0,0,1170236.03,2004236.23,2252894.06,1258419.11,9501
+[status] PUB sent=42550 tps=271 (pubs=10) | SUB recv=4243600 itps=46998.38 p99=2.21ms conn=68812799/1652780.33,1739218.29,4243600,1000,1000,1000,0,0,0,0,0,0,1123221.58,1983032.31,2318335.09,1148077.06,46996
+[status] PUB sent=43050 tps=272 (pubs=10) | SUB recv=4293589 itps=46987.78 p99=2.20ms conn=68812799/1646789.74,1730944.58,4293589,1000,1000,1000,0,0,0,0,0,0,1091361.02,1941071.58,2157074.73,1108680.89,46987
+[status] PUB sent=44050 tps=275 (pubs=10) | SUB recv=4393609 itps=46993.10 p99=2.17ms conn=68812799/1635548.91,1721813.13,4393609,1000,1000,1000,0,0,0,0,0,0,1077162.87,1949652.79,2237489.29,1172289.95,46992
+[status] PUB sent=44550 tps=277 (pubs=10) | SUB recv=4443597 itps=46999.57 p99=2.16ms conn=68812799/1629746.33,1713912.83,4443597,1000,1000,1000,0,0,0,0,0,0,1068295.61,1913239.05,2131716.32,1085796.71,47000
+[status] PUB sent=45550 tps=279 (pubs=10) | SUB recv=4543611 itps=47012.42 p99=2.14ms conn=68812799/1619334.25,1705534.43,4543611,1000,1000,1000,0,0,0,0,0,0,1060221.52,1962336.97,2273027.53,1163361.75,47012
+[status] PUB sent=46050 tps=281 (pubs=10) | SUB recv=4593611 itps=46990.27 p99=2.13ms conn=68812799/1613904.82,1697946.89,4593611,1000,1000,1000,0,0,0,0,0,0,1074218.32,1928304.01,2192498.55,1089924.66,46993
+[status] PUB sent=47050 tps=283 (pubs=10) | SUB recv=4680099 itps=33500.74 p99=2.11ms conn=68812799/1605273.31,1690063.92,4680099,1000,1000,1000,0,0,0,0,0,0,1027710.85,1848987.40,2219837.26,1129123.73,33499
+[status] PUB sent=47550 tps=285 (pubs=10) | SUB recv=4743594 itps=47001.66 p99=2.09ms conn=68812799/1599200.37,1682584.22,4743594,1000,1000,1000,0,0,0,0,0,0,1070868.59,1888205.63,2191876.18,1089582.63,47004
+[status] PUB sent=48550 tps=287 (pubs=10) | SUB recv=4815111 itps=18499.50 p99=2.07ms conn=68812799/1592662.91,1672054.78,4815111,1000,1000,1000,0,0,0,0,0,0,1180603.39,2156710.60,2389778.76,1204710.98,18500
+[status] PUB sent=49050 tps=288 (pubs=10) | SUB recv=4893599 itps=46985.15 p99=2.04ms conn=68812799/1585458.39,1667755.16,4893599,1000,1000,1000,0,0,0,0,0,0,1074039.15,1939925.52,2312547.21,1176453.49,46987
+[status] PUB sent=50050 tps=291 (pubs=10) | SUB recv=4948592 itps=1999.37 p99=2.03ms conn=68812799/1580919.92,1659993.22,4948592,1000,1000,1000,0,0,0,0,0,0,1803263,2694143,3303423,1797100.42,2000
+[status] PUB sent=50550 tps=292 (pubs=10) | SUB recv=5043595 itps=46996.52 p99=2.01ms conn=68812799/1572199.96,1653395.89,5043595,1000,1000,1000,0,0,0,0,0,0,1062922.35,1903710.09,2216844.86,1158726.48,46994
+[status] PUB sent=51050 tps=293 (pubs=10) | SUB recv=5093603 itps=47005.25 p99=2.00ms conn=68812799/1567839.80,1646672.98,5093603,1000,1000,1000,0,0,0,0,0,0,1080589.37,1915900.95,2169498.34,1095806.58,47006
+[status] PUB sent=52050 tps=296 (pubs=10) | SUB recv=5193615 itps=47000.50 p99=1.98ms conn=68812799/1559600.70,1639739.18,5193615,1000,1000,1000,0,0,0,0,0,0,1037786.70,1925058.56,2249986.14,1137090.20,47000
+[status] PUB sent=52550 tps=297 (pubs=10) | SUB recv=5243603 itps=46986.12 p99=1.97ms conn=68812799/1555254.95,1633267.02,5243603,1000,1000,1000,0,0,0,0,0,0,1051306.47,1881754.21,2153911.69,1074639.79,46986
+[status] PUB sent=53550 tps=299 (pubs=10) | SUB recv=5343603 itps=46987.21 p99=1.95ms conn=68812799/1547495.46,1620580.75,5343603,1000,1000,1000,0,0,0,0,0,0,1101286.43,1950290.16,2443011.30,1116624.27,46990
+[status] PUB sent=54050 tps=300 (pubs=10) | SUB recv=5393600 itps=47003.05 p99=1.95ms conn=68812799/1545068.64,1626563.45,5393600,1000,1000,1000,0,0,0,0,0,0,1083829.10,1902315.09,2307434.58,1252085.60,47001
+[status] PUB sent=54470 tps=299 (pubs=10) | SUB recv=5442716 itps=18805.65 p99=1.95ms conn=68812799/1548757.12,1624693.66,5442716,1000,1000,1000,0,0,0,0,0,0,1909158.63,3459486.79,3600850.95,1942537.96,18806
+[status] PUB sent=54670 tps=299 (pubs=10) | SUB recv=5462708 itps=18793.30 p99=1.96ms conn=68812799/1550252.86,1624184.42,5462708,1000,1000,1000,0,0,0,0,0,0,1885398.50,3447437.95,3718584.96,1969581.61,18793
+[status] PUB sent=55070 tps=298 (pubs=10) | SUB recv=5502710 itps=18803.79 p99=1.96ms conn=68812799/1553216.57,1620947.89,5502710,1000,1000,1000,0,0,0,0,0,0,1970604.88,3495109.44,3974933.82,1980741.71,18804
+[status] PUB sent=55270 tps=297 (pubs=10) | SUB recv=5522711 itps=18803.16 p99=1.97ms conn=68812799/1554852.54,1620455.33,5522711,1000,1000,1000,0,0,0,0,0,0,1944593.41,3458161.47,3735529.87,2010951.73,18804
+[status] PUB sent=55670 tps=296 (pubs=10) | SUB recv=5562706 itps=18791.86 p99=1.97ms conn=68812799/1557794.64,1617225.94,5562706,1000,1000,1000,0,0,0,0,0,0,1956832.38,3505863.53,3743646.77,1963638.55,18792
+[status] PUB sent=55870 tps=296 (pubs=10) | SUB recv=5582712 itps=18804.26 p99=1.98ms conn=68812799/1559146.96,1615589.12,5582712,1000,1000,1000,0,0,0,0,0,0,1903413.29,3479441.98,3674580.63,1946972.44,18804
+[status] PUB sent=56270 tps=295 (pubs=10) | SUB recv=5622711 itps=18795.19 p99=1.99ms conn=68812799/1561943.01,1613529.74,5622711,1000,1000,1000,0,0,0,0,0,0,1883802.98,3473611.52,3655721.17,1938707.44,18796
+[status] PUB sent=56470 tps=294 (pubs=10) | SUB recv=5642714 itps=18801.45 p99=1.99ms conn=68812799/1563289.41,1611924.64,5642714,1000,1000,1000,0,0,0,0,0,0,1923234.61,3485312.76,3658275.57,1955224.62,18801
+[status] PUB sent=56870 tps=293 (pubs=10) | SUB recv=5682711 itps=18805.67 p99=2.00ms conn=68812799/1565949.67,1609757.62,5682711,1000,1000,1000,0,0,0,0,0,0,1900269.59,3460455.97,3609148.51,1945945.17,18805
+[status] PUB sent=57070 tps=293 (pubs=10) | SUB recv=5702709 itps=18795.10 p99=2.01ms conn=68812799/1567159.09,1608125.06,5702709,1000,1000,1000,0,0,0,0,0,0,1891353.15,3444616.12,3572978.70,1920427.38,18795
+[status] PUB sent=57470 tps=292 (pubs=10) | SUB recv=5742708 itps=18795.32 p99=2.02ms conn=68812799/1569846.21,1606012.47,5742708,1000,1000,1000,0,0,0,0,0,0,1944540.08,3516898.70,3734644.19,1976432.47,18795
+[status] PUB sent=57670 tps=291 (pubs=10) | SUB recv=5762714 itps=18801.54 p99=2.02ms conn=68812799/1571164.62,1604465.01,5762714,1000,1000,1000,0,0,0,0,0,0,1944767.46,3507385.41,3691082.18,1962611.95,18803
+[status] PUB sent=58070 tps=290 (pubs=10) | SUB recv=5802705 itps=18794.23 p99=2.03ms conn=68812799/1573818.99,1602491.16,5802705,1000,1000,1000,0,0,0,0,0,0,1922007.77,3466544.99,3628708.15,1994458.18,18794
+[status] PUB sent=58270 tps=290 (pubs=10) | SUB recv=5822712 itps=18805.35 p99=2.03ms conn=68812799/1575220.24,1601060.93,5822712,1000,1000,1000,0,0,0,0,0,0,1954066.48,3489945.21,4057828.33,1983202.94,18805
+[status] PUB sent=58670 tps=289 (pubs=10) | SUB recv=5862705 itps=18796.80 p99=2.04ms conn=68812799/1578282.98,1599369.67,5862705,1000,1000,1000,0,0,0,0,0,0,1980067.49,3494820.62,4262181.72,2042741.06,18797
+[status] PUB sent=58870 tps=289 (pubs=10) | SUB recv=5882707 itps=18799.86 p99=2.05ms conn=68812799/1579673.00,1597889.64,5882707,1000,1000,1000,0,0,0,0,0,0,1955973.70,3521609.40,3990161.19,2001807.27,18800
+[status] PUB sent=59270 tps=288 (pubs=10) | SUB recv=5922707 itps=18798.99 p99=2.06ms conn=68812799/1582482.74,1595979.75,5922707,1000,1000,1000,0,0,0,0,0,0,1949604.46,3452002.58,3745648.93,2008873.27,18798
+[status] PUB sent=59670 tps=287 (pubs=10) | SUB recv=5942710 itps=18801.82 p99=2.06ms conn=68812799/1583840.46,1594502.22,5942710,1000,1000,1000,0,0,0,0,0,0,1966325.17,3479483.25,3908992.48,1995857.55,18802
+[status] PUB sent=59870 tps=286 (pubs=10) | SUB recv=5982712 itps=18799.77 p99=2.07ms conn=68812799/1586468.93,1591512.02,5982712,1000,1000,1000,0,0,0,0,0,0,1963511.24,3456710.66,3752533.09,1972708.26,18799
+[status] PUB sent=60270 tps=286 (pubs=10) | SUB recv=6007108 itps=3202.39 p99=2.08ms conn=68812799/1588404.65,1592276.87,6007108,1000,1000,1000,0,0,0,0,0,0,1918263.12,3384736.66,4149592.38,1945450.21,3202
+[status] PUB sent=60470 tps=285 (pubs=10) | SUB recv=6042710 itps=18799.71 p99=2.09ms conn=68812799/1590839.22,1589738.91,6042710,1000,1000,1000,0,0,0,0,0,0,1976786.88,3508032.03,3709341.28,2010881.37,18800
+[status] PUB sent=60870 tps=284 (pubs=10) | SUB recv=6073314 itps=9396.79 p99=2.10ms conn=68812799/1592734.80,1588480.30,6073314,1000,1000,1000,0,0,0,0,0,0,1925833.20,3465569.59,3782727.57,1955370.31,9397
+[status] PUB sent=61070 tps=284 (pubs=10) | SUB recv=6102707 itps=18796.60 p99=2.11ms conn=68812799/1594487.73,1586340.67,6102707,1000,1000,1000,0,0,0,0,0,0,1920336.54,3394183.93,3596554.59,1933366.71,18797
+[status] PUB sent=61470 tps=283 (pubs=10) | SUB recv=6142709 itps=18797.46 p99=2.11ms conn=68812799/1597288.41,1584535.47,6142709,1000,1000,1000,0,0,0,0,0,0,1973088.74,3500079.81,3849880.54,1995592.28,18797
+[status] PUB sent=61670 tps=283 (pubs=10) | SUB recv=6162703 itps=18795.18 p99=2.12ms conn=68812799/1598680.34,1583202.00,6162703,1000,1000,1000,0,0,0,0,0,0,2023753.11,3548540.98,4042382.70,2039629.96,18795
+[status] PUB sent=62070 tps=282 (pubs=10) | SUB recv=6202710 itps=18800.23 p99=2.13ms conn=68812799/1601257.34,1581669.68,6202710,1000,1000,1000,0,0,0,0,0,0,1975544.90,3535805.97,4265621.33,2044134.18,18800
+[status] PUB sent=62270 tps=282 (pubs=10) | SUB recv=6222706 itps=18797.29 p99=2.13ms conn=68812799/1602557.95,1580319.17,6222706,1000,1000,1000,0,0,0,0,0,0,1984198.03,3509382.81,4012718.61,2015579.21,18797
+[status] PUB sent=62670 tps=281 (pubs=10) | SUB recv=6262708 itps=18796.32 p99=2.14ms conn=68812799/1605067.41,1578562.29,6262708,1000,1000,1000,0,0,0,0,0,0,1955140.41,3438050.67,3644404.10,2002060.37,18796
+[status] PUB sent=63070 tps=280 (pubs=10) | SUB recv=6282706 itps=18799.87 p99=2.14ms conn=68812799/1606274.84,1577219.67,6282706,1000,1000,1000,0,0,0,0,0,0,1980715.01,3520092.25,4095629.38,1997283.25,18800
+[status] PUB sent=63270 tps=280 (pubs=10) | SUB recv=6322710 itps=18797.03 p99=2.15ms conn=68812799/1608907.14,1575731.88,6322710,1000,1000,1000,0,0,0,0,0,0,1989375.01,3608348.81,4869840.76,2058420.14,18797
+[status] PUB sent=63670 tps=279 (pubs=10) | SUB recv=6352707 itps=8795.35 p99=2.15ms conn=68812799/1610796.93,1573840.33,6352707,1000,1000,1000,0,0,0,0,0,0,1922858.19,3578285.28,4809770.31,1987452.89,8796
+[status] PUB sent=63870 tps=279 (pubs=10) | SUB recv=6382706 itps=18799.73 p99=2.15ms conn=68812799/1612620.12,1571899.54,6382706,1000,1000,1000,0,0,0,0,0,0,1931678.45,3479734.02,3711891.64,1977710.10,18799
+[status] PUB sent=64270 tps=278 (pubs=10) | SUB recv=6422709 itps=18802.58 p99=2.16ms conn=68812799/1614924.50,1570218.98,6422709,1000,1000,1000,0,0,0,0,0,0,1945257.41,3436559.77,3682875.73,1956886.84,18802
+[status] PUB sent=64470 tps=278 (pubs=10) | SUB recv=6442707 itps=18798.33 p99=2.16ms conn=68812799/1616154.18,1568918.46,6442707,1000,1000,1000,0,0,0,0,0,0,1996175.33,3548437.91,3820707.18,2027149.54,18798
+[status] PUB sent=64870 tps=277 (pubs=10) | SUB recv=6482710 itps=18799.74 p99=2.17ms conn=68812799/1618655.03,1567514.79,6482710,1000,1000,1000,0,0,0,0,0,0,1987643.41,3570526.43,3789420.48,2023702.98,18800
+[status] PUB sent=65270 tps=277 (pubs=10) | SUB recv=6502711 itps=18800.55 p99=2.17ms conn=68812799/1619815.31,1566200.60,6502711,1000,1000,1000,0,0,0,0,0,0,1991802.85,3510570.99,3791026.52,2008706.49,18801
+[status] PUB sent=65470 tps=276 (pubs=10) | SUB recv=6542712 itps=18799.78 p99=2.18ms conn=68812799/1622189.13,1564588.36,6542712,1000,1000,1000,0,0,0,0,0,0,1997875.29,3542518.07,3857502.54,2016474.02,18800
+[status] PUB sent=65870 tps=276 (pubs=10) | SUB recv=6578113 itps=14205.24 p99=2.18ms conn=68812799/1624822.26,1565339.06,6578113,1000,1000,1000,0,0,0,0,0,0,1958169.63,3747282.38,11924313.07,2319404.20,14206
+[status] PUB sent=66070 tps=275 (pubs=10) | SUB recv=6602717 itps=18802.88 p99=2.19ms conn=68812799/1626319.08,1566214.23,6602717,1000,1000,1000,0,0,0,0,0,0,1909396.01,3476309.08,3763038.12,2022884.50,18802
+[status] PUB sent=68090 tps=281 (pubs=10) | SUB recv=6724300 itps=50978.22 p99=2.25ms conn=779091967/6428517.38,43106748.28,6724300,1000,1000,1000,0,0,0,0,0,0,436461845.16,646708861.34,664078324.60,436174955.99,50979
+[status] PUB sent=70090 tps=287 (pubs=10) | SUB recv=6784047 itps=54543.19 p99=2.29ms conn=1109393407/12702867.44,80844331.68,6784047,1000,1000,1000,0,0,0,0,0,0,716118006.66,966080746.30,990828470.37,718736325.76,54538
+[status] PUB sent=71090 tps=290 (pubs=10) | SUB recv=6942944 itps=81076.98 p99=2.39ms conn=1831862271/40611761.68,202667024.24,6942944,1000,1000,1000,0,0,0,0,0,0,1408613297.14,1702085682.59,1732157646.82,1408654069.92,81083
+[status] PUB sent=73090 tps=296 (pubs=10) | SUB recv=7039349 itps=34997.13 p99=2.44ms conn=2361393151/65062139.99,289930979.29,7039349,1000,1000,1000,0,0,0,0,0,0,1954337044.53,2211731213.70,2239548278.20,1955715554.55,34993
+[status] PUB sent=74090 tps=299 (pubs=10) | SUB recv=7133931 itps=71230.78 p99=2.49ms conn=2751463423/93899360.15,381399601.51,7133931,1000,1000,1000,0,0,0,0,0,0,2282281542.30,2572458227.73,2603214602.27,2284840023.40,71232
+[status] PUB sent=76090 tps=304 (pubs=10) | SUB recv=7274300 itps=53357.56 p99=2.58ms conn=3342860287/145725827.26,529074827.73,7274300,1000,1000,1000,0,0,0,0,0,0,2980186607.61,3199323389.91,3217684945.22,2976816483.30,53364
+[status] PUB sent=78090 tps=310 (pubs=10) | SUB recv=7334168 itps=54683.78 p99=2.63ms conn=3609198591/170985990.91,596236563.96,7334168,1000,1000,1000,0,0,0,0,0,0,3239080221.77,3486087146.17,3510571882.89,3239789386.63,54676
+[status] PUB sent=79090 tps=313 (pubs=10) | SUB recv=7480162 itps=70422.05 p99=2.72ms conn=4437573631/240622221.45,770527150.03,7480162,1000,1000,1000,0,0,0,0,0,0,3941332723.49,4239400123.02,4268337354.06,3944170526.92,70418
+[status] PUB sent=81090 tps=318 (pubs=10) | SUB recv=7596309 itps=44000.83 p99=2.78ms conn=5028970495/305251852.54,924145208.71,7596309,1000,1000,1000,0,0,0,0,0,0,4664066047,4877765835.80,4894700338.20,4663083341.64,44000
+[status] PUB sent=82090 tps=321 (pubs=10) | SUB recv=7659385 itps=51784.53 p99=2.82ms conn=5360320511/343316220.18,1010790179.33,7659385,1000,1000,1000,0,0,0,0,0,0,4959799266.17,5177012052.86,5193886948.32,4958007626.70,51785
+[status] PUB sent=84090 tps=326 (pubs=10) | SUB recv=7810679 itps=71655.73 p99=2.93ms conn=6136266751/442508186.91,1225410877.24,7810679,1000,1000,1000,0,0,0,0,0,0,5653174587.48,5942810999.39,5971908848.01,5653115312.17,71643
+[status] PUB sent=86090 tps=331 (pubs=10) | SUB recv=7891944 itps=9349.26 p99=3.00ms conn=6580862975/500394527.51,1344627461.91,7891944,1000,1000,1000,0,0,0,0,0,0,6267030346.29,6480199679,6496976895,6265820952.26,9350
+[status] PUB sent=87090 tps=334 (pubs=10) | SUB recv=7989300 itps=52250.52 p99=3.06ms conn=7029653503/574121024.34,1492356409.02,7989300,1000,1000,1000,0,0,0,0,0,0,6673799921.53,6884839638.58,6901616854.58,6671861230.93,52250
+[status] PUB sent=89090 tps=339 (pubs=10) | SUB recv=8144231 itps=75445.30 p99=3.16ms conn=7805599743/699867045.44,1732551124.26,8144231,1000,1000,1000,0,0,0,0,0,0,7365445007.89,7651913007.77,7681233661.80,7362935326.10,75441
+[status] PUB sent=91090 tps=344 (pubs=10) | SUB recv=8209300 itps=62309.99 p99=3.20ms conn=8057257983/755170365.91,1833168092.40,8209300,1000,1000,1000,0,0,0,0,0,0,7681649542.51,7934586688.85,7958720409.45,7680368988.22,62319
+[status] PUB sent=92090 tps=346 (pubs=10) | SUB recv=8340567 itps=69673.26 p99=3.32ms conn=8640266239/871158783.59,2037201688.57,8340567,1000,1000,1000,0,0,0,0,0,0,8252757751.34,8521101334.46,8546708702.17,8250086966.79,69667
+[status] PUB sent=94090 tps=351 (pubs=10) | SUB recv=8484300 itps=65305 p99=3.42ms conn=9328132095/1004956081.97,2262544067.79,8484300,1000,1000,1000,0,0,0,0,0,0,8952084385.71,9211564697.96,9235882965.97,8948322273.33,65313
+[status] PUB sent=96090 tps=356 (pubs=10) | SUB recv=8539300 itps=51696.54 p99=3.46ms conn=9604956159/1058005296.38,2349550986.05,8539300,1000,1000,1000,0,0,0,0,0,0,9252991585.04,9464491595.26,9481268811.26,9248489158.90,51700
+[status] PUB sent=97090 tps=358 (pubs=10) | SUB recv=8671300 itps=68196.31 p99=3.60ms conn=10309599231/1190260831.44,2563057643.42,8671300,1000,1000,1000,0,0,0,0,0,0,9905614008.51,10180501691.20,10206887884.32,9902611542.37,68209
+[status] PUB sent=99090 tps=363 (pubs=10) | SUB recv=8793474 itps=45916.30 p99=21.36ms conn=11098128383/1318962493.72,2766017105.92,8793474,1000,1000,1000,0,0,0,0,0,0,10686517450.79,10925211129.73,10946597175.95,10678544283.27,45927
+[status] PUB sent=100090 tps=365 (pubs=10) | SUB recv=8869300 itps=51803.24 p99=184.81ms conn=11366563839/1401092714.86,2893285923.31,8869300,1000,1000,1000,0,0,0,0,0,0,11018260089.96,11230142401.01,11247908760.20,11013338018.54,51800
+[status] PUB sent=102090 tps=370 (pubs=10) | SUB recv=9004365 itps=71609.23 p99=704.74ms conn=12054429695/1551792225.75,3120654207.58,9004365,1000,1000,1000,0,0,0,0,0,0,11578648907.45,11872390060.06,11902788923.78,11579486386.92,71608
+[status] PUB sent=104090 tps=374 (pubs=10) | SUB recv=9121912 itps=31348.91 p99=1131.96ms conn=12582911999/1686904255.24,3318367753.07,9121912,1000,1000,1000,0,0,0,0,0,0,12246043161.95,12455758361.95,12474007263.56,12241202655.17,31350
+[status] PUB sent=105090 tps=377 (pubs=10) | SUB recv=9200565 itps=52498.36 p99=1401.82ms conn=12935233535/1779405211.48,3451044042.95,9200565,1000,1000,1000,0,0,0,0,0,0,12569121195.20,12790804575.13,12809554622.47,12565563036.83,52496
+[status] PUB sent=107090 tps=381 (pubs=10) | SUB recv=9358314 itps=79273.44 p99=1943.96ms conn=13673431039/1969543774.20,3717382804.48,9358314,1000,1000,1000,0,0,0,0,0,0,13249232306.31,13541528263.71,13572984591.23,13247110919.96,79264
+[status] PUB sent=109090 tps=386 (pubs=10) | SUB recv=9453950 itps=31352.50 p99=2262.56ms conn=14118027263/2087626618.86,3878682876.41,9453950,1000,1000,1000,0,0,0,0,0,0,13791165888.12,14002352773.74,14020601675.35,13786064224.05,31350
+[status] PUB sent=110090 tps=388 (pubs=10) | SUB recv=9551782 itps=71977.57 p99=2598.62ms conn=14537457663/2210459546.87,4043314139.35,9551782,1000,1000,1000,0,0,0,0,0,0,14122780248.15,14392522440.02,14421572694.60,14120350324.10,71982
+[status] PUB sent=112090 tps=392 (pubs=10) | SUB recv=9694300 itps=54168.79 p99=3084.16ms conn=15141437439/2392512297.96,4281284525.77,9694300,1000,1000,1000,0,0,0,0,0,0,14794590423.53,15019229405.58,15037539846.56,14788810095.14,54176
+[status] PUB sent=114090 tps=396 (pubs=10) | SUB recv=9809057 itps=53259.24 p99=3476.13ms conn=15770583039/2542353928.34,4473288891.11,9809057,1000,1000,1000,0,0,0,0,0,0,15352236300.10,15646246158.14,15674776056.83,15349458474.47,53258
+[status] PUB sent=116090 tps=400 (pubs=10) | SUB recv=9905070 itps=75669.72 p99=3859.38ms conn=16198402047/2669901036.52,4634798536.48,9905070,1000,1000,1000,0,0,0,0,0,0,15764219989.97,16054562858.47,16085121525.34,15759867034.81,75663
+[status] PUB sent=117090 tps=402 (pubs=10) | SUB recv=10024300 itps=52250.99 p99=4351.89ms conn=16785604607/2831337150.68,4836410175.45,10024300,1000,1000,1000,0,0,0,0,0,0,16428868014.16,16639466225.53,16656243441.53,16424741783.31,52250
+[status] PUB sent=119090 tps=406 (pubs=10) | SUB recv=10155305 itps=65575.31 p99=4880.77ms conn=17498636287/3012650340.61,5060168180.07,10155305,1000,1000,1000,0,0,0,0,0,0,17028385818.20,17335920523.13,17368860143.62,17030306497.53,65574
+[status] PUB sent=121090 tps=410 (pubs=10) | SUB recv=10243849 itps=81379.86 p99=5209.36ms conn=17817403391/3136828726.48,5210847179.48,10243849,1000,1000,1000,0,0,0,0,0,0,17403432377.97,17695527925.82,17725852402.60,17395598913.08,81394
+[status] PUB sent=122090 tps=412 (pubs=10) | SUB recv=10359625 itps=55906.57 p99=5634.95ms conn=18371051519/3301278953.57,5407693428.58,10359625,1000,1000,1000,0,0,0,0,0,0,17988617254.39,18234706700.05,18262333070.35,17981613792.68,55898
+[status] PUB sent=124090 tps=416 (pubs=10) | SUB recv=10517903 itps=80177.72 p99=6258.41ms conn=19092471807/3529629010.58,5675982340.29,10517903,1000,1000,1000,0,0,0,0,0,0,18662012619.02,18956080502.39,18984985639.79,18654472476.89,80182
+[status] PUB sent=126090 tps=420 (pubs=10) | SUB recv=10574300 itps=53639.86 p99=6503.75ms conn=19327352831/3611974010.19,5771432199.67,10574300,1000,1000,1000,0,0,0,0,0,0,18985139468.35,19203003722.46,19221570712.48,18973789587.50,53647
+[status] PUB sent=126310 tps=420 (pubs=10) | SUB recv=10706500 itps=70573.56 p99=7002.55ms conn=19998441471/3807200194.66,5995677013.24,10706500,1000,1000,1000,0,0,0,0,0,0,19567497477.11,19841769013.64,19869297892.78,19561631443.35,70572
+[status] PUB sent=126710 tps=418 (pubs=10) | SUB recv=10849300 itps=57998.90 p99=7508.30ms conn=20635975679/4021251503.56,6237795399.82,10849300,1000,1000,1000,0,0,0,0,0,0,20266288278.13,20505877914.58,20528924891.90,20257116637.96,58000
+[status] PUB sent=127110 tps=417 (pubs=10) | SUB recv=10931800 itps=22002.03 p99=7780.41ms conn=21189623807/4146517618.02,6377735262.00,10931800,1000,1000,1000,0,0,0,0,0,0,20812136447,21105737727,21135097855,20808623146.45,22000
+[status] PUB sent=127310 tps=416 (pubs=10) | SUB recv=11064351 itps=80017.09 p99=8236.66ms conn=21625831423/4349326983.23,6601998436.93,11064351,1000,1000,1000,0,0,0,0,0,0,21212913402.92,21498843894.16,21528693053.55,21203590351.71,80004
+[status] PUB sent=127710 tps=415 (pubs=10) | SUB recv=11180026 itps=52890.32 p99=8638.54ms conn=22145925119/4527978799.02,6796193411.84,11180026,1000,1000,1000,0,0,0,0,0,0,21765598413.38,21989567759.68,22006344975.68,21758196066.98,52887
+[status] PUB sent=128110 tps=413 (pubs=10) | SUB recv=11337980 itps=78907.93 p99=9199.92ms conn=22884122623/4774997324.38,7061516499.64,11337980,1000,1000,1000,0,0,0,0,0,0,22449985102.75,22740277121.22,22771221820.77,22441159343.24,78906
+[status] PUB sent=128510 tps=412 (pubs=10) | SUB recv=11399300 itps=58565.09 p99=9436.44ms conn=23135780863/4871718889.29,7164219704.25,11399300,1000,1000,1000,0,0,0,0,0,0,22767552910.67,23007959788.76,23031272298.99,22759179198.93,58570
+[status] PUB sent=128710 tps=411 (pubs=10) | SUB recv=11529189 itps=69301.89 p99=9989.45ms conn=23756537855/5078338955.79,7382151083.66,11529189,1000,1000,1000,0,0,0,0,0,0,23362142301.57,23632723027.43,23658098996.37,23352667622.95,69298
+[status] PUB sent=129110 tps=410 (pubs=10) | SUB recv=11674300 itps=66058.74 p99=10568.10ms conn=24461180927/5312073842.76,7626203254.61,11674300,1000,1000,1000,0,0,0,0,0,0,24073501740.94,24341859745.66,24366589557.07,24065443254.13,66068
+[status] PUB sent=129510 tps=408 (pubs=10) | SUB recv=11764145 itps=29352.51 p99=10920.60ms conn=24981274623/5458277471.12,7777377226.64,11764145,1000,1000,1000,0,0,0,0,0,0,24628658649.57,24910028770.25,24940438724.89,24614687165.96,29345
+[status] PUB sent=129910 tps=407 (pubs=10) | SUB recv=11868455 itps=62779.58 p99=11285.30ms conn=25434259455/5628805522.85,7952526120.69,11868455,1000,1000,1000,0,0,0,0,0,0,24987861940.41,25276088209.91,25303448960.14,24980590905.88,62781
+[status] PUB sent=130110 tps=407 (pubs=10) | SUB recv=12004300 itps=55947.65 p99=11751.70ms conn=26122125311/5853799072.04,8182224267.60,12004300,1000,1000,1000,0,0,0,0,0,0,25726711750.27,25963491057.76,25982666089.76,25719165991.93,55954
+[status] PUB sent=130510 tps=405 (pubs=10) | SUB recv=12131065 itps=66275.25 p99=12214.40ms conn=26742882303/6066425161.76,8398340339.37,12131065,1000,1000,1000,0,0,0,0,0,0,26351365655.98,26617962492.16,26644554373.19,26341744804.05,66265
+[status] PUB sent=130910 tps=404 (pubs=10) | SUB recv=12200397 itps=66586.31 p99=12460.60ms conn=27162312703/6183568120.29,8516635431.71,12200397,1000,1000,1000,0,0,0,0,0,0,26686816637.89,26976693175.36,27006373945.69,26678600635.99,66582
+[status] PUB sent=131110 tps=403 (pubs=10) | SUB recv=12334300 itps=52256.93 p99=12929.50ms conn=27715960831/6411308041.23,8744722933.34,12334300,1000,1000,1000,0,0,0,0,0,0,27369665095.69,27584414102.56,27601191318.56,27361700574.08,52260
+[status] PUB sent=131510 tps=402 (pubs=10) | SUB recv=12468410 itps=71115.64 p99=13394.40ms conn=28403826687/6641395342.30,8973208214.26,12468410,1000,1000,1000,0,0,0,0,0,0,27940843428.91,28225964556.22,28256235648.26,27933981825.09,71108
+[status] PUB sent=131910 tps=401 (pubs=10) | SUB recv=12609300 itps=53571.63 p99=13886.60ms conn=28991029247/6884816559.00,9212055243.16,12609300,1000,1000,1000,0,0,0,0,0,0,28636541312.86,28862666869.16,28879937928.74,28609071930.35,53575
+[status] PUB sent=132310 tps=400 (pubs=10) | SUB recv=12666395 itps=52853.23 p99=14069.70ms conn=29125246975/6979281161.12,9298052434.00,12666395,1000,1000,1000,0,0,0,0,0,0,27833753388.04,28881296902.47,28940778547.14,27803889716.00,52851
+[status] PUB sent=132570 tps=399 (pubs=10) | SUB recv=12824436 itps=78949.71 p99=14576.60ms conn=29125246975/7189622013.11,9432488666.06,12824436,1000,1000,1000,0,0,0,0,0,0,22725646111.22,24451262239.79,24618812553.71,22731254206.86,78953
+[status] PUB sent=132910 tps=398 (pubs=10) | SUB recv=12939355 itps=52296.16 p99=14964.00ms conn=29125246975/7296590847.64,9459106312.54,12939355,1000,1000,1000,0,0,0,0,0,0,18154850764.68,19369781016.57,19468680146.85,18147898830.09,52305
+[status] PUB sent=133310 tps=397 (pubs=10) | SUB recv=13091657 itps=73116.79 p99=15075.70ms conn=29125246975/7380833632.20,9437702147.06,13091657,1000,1000,1000,0,0,0,0,0,0,13210281726.51,14865991664.10,15021215449.64,13227261693.83,73108
+[status] PUB sent=133710 tps=396 (pubs=10) | SUB recv=13162050 itps=67636.90 p99=15005.00ms conn=29125246975/7398033716.13,9415643682.94,13162050,1000,1000,1000,0,0,0,0,0,0,10602130155.23,12027145481.78,12161317324.99,10569962065.00,67643
+[status] PUB sent=134110 tps=394 (pubs=10) | SUB recv=13287009 itps=67214.80 p99=14876.90ms conn=29125246975/7395763357.64,9372349750.60,13287009,1000,1000,1000,0,0,0,0,0,0,6189269101.43,7766903358.53,7909025666.77,6219035889.26,67209
+[status] PUB sent=134310 tps=394 (pubs=10) | SUB recv=13423712 itps=57022.16 p99=14737.70ms conn=29125246975/7346461744.52,9338415489.50,13423712,1000,1000,1000,0,0,0,0,0,0,1139678485.75,2460318871.91,2591490253.85,1212773771.31,57028
+[status] PUB sent=134710 tps=393 (pubs=10) | SUB recv=13466675 itps=19000.29 p99=14694.00ms conn=29125246975/7323095296.61,9332652054.87,13466675,1000,1000,1000,0,0,0,0,0,0,1919551.54,3492897.98,3689030.54,2012141.68,19001
+[status] PUB sent=135110 tps=392 (pubs=10) | SUB recv=13498072 itps=10399.61 p99=14664.60ms conn=29125246975/7306065973.25,9328451677.60,13498072,1000,1000,1000,0,0,0,0,0,0,1903431.75,3481382.76,3728457.15,1942724.31,10399
+[status] PUB sent=135510 tps=390 (pubs=10) | SUB recv=13526678 itps=19001.07 p99=14635.60ms conn=29125246975/7290619359.17,9324630897.79,13526678,1000,1000,1000,0,0,0,0,0,0,1886028.57,3424282.27,3660156.43,1969924.36,19002
+[status] PUB sent=135910 tps=389 (pubs=10) | SUB recv=13566671 itps=18997.51 p99=14597.40ms conn=29125246975/7269133183.87,9319258046.41,13566671,1000,1000,1000,0,0,0,0,0,0,1918401.52,3495478.66,3636026.20,1968978.31,18997
+[status] PUB sent=136110 tps=389 (pubs=10) | SUB recv=13606679 itps=19001.42 p99=14554.70ms conn=29125246975/7247765402.86,9313862483.02,13606679,1000,1000,1000,0,0,0,0,0,0,1940114.01,3463535.39,3729918.62,2015466.68,19002
+[status] PUB sent=136510 tps=388 (pubs=10) | SUB recv=13646677 itps=19004.89 p99=14514.00ms conn=29125246975/7226528091.60,9308448282.57,13646677,1000,1000,1000,0,0,0,0,0,0,1905039.87,3470499.71,3626080.36,1937805.88,19005
+[status] PUB sent=136910 tps=387 (pubs=10) | SUB recv=13675273 itps=7596.76 p99=14486.90ms conn=29125246975/7211420998.57,9304558413.95,13675273,1000,1000,1000,0,0,0,0,0,0,1915031.60,3473990.45,3685380.93,1956893.81,7596
+[status] PUB sent=137310 tps=386 (pubs=10) | SUB recv=13706675 itps=19000.32 p99=14456.20ms conn=29125246975/7194904114.87,9300290299.33,13706675,1000,1000,1000,0,0,0,0,0,0,1929432.72,3474192.42,3654567.21,1963371.68,19001
+[status] PUB sent=137590 tps=385 (pubs=10) | SUB recv=13746674 itps=18995.68 p99=14417.80ms conn=29125246975/7173974681.77,9294828023.11,13746674,1000,1000,1000,0,0,0,0,0,0,1936905.46,3494295.28,3680394.19,1976631.99,18996
+[status] PUB sent=137910 tps=384 (pubs=10) | SUB recv=13786672 itps=18996.56 p99=14379.30ms conn=29125246975/7153167149.92,9289347706.39,13786672,1000,1000,1000,0,0,0,0,0,0,1935168.01,3511683.56,3686694.94,1977096.24,18996
+[status] PUB sent=140130 tps=388 (pubs=10) | SUB recv=13870800 itps=61511.89 p99=14300.00ms conn=29125246975/7110979347.59,9276881098.35,13870800,1000,1000,1000,0,0,0,0,0,0,315601537.98,426662036.42,438005542.19,264779431.85,61512
+[status] PUB sent=144130 tps=397 (pubs=10) | SUB recv=13964934 itps=35534.94 p99=14210.90ms conn=29125246975/7070412793.69,9258682090.63,13964934,1000,1000,1000,0,0,0,0,0,0,1365727180.39,1619731037.39,1628444193.38,1407258360.92,35530
+[status] PUB sent=148130 tps=406 (pubs=10) | SUB recv=14055630 itps=66255.25 p99=14125.60ms conn=29125246975/7037786759.73,9237683121.83,14055630,1000,1000,1000,0,0,0,0,0,0,2111558594.38,2386415830.53,2403158130.92,2133428005.07,66250
+[status] PUB sent=152130 tps=414 (pubs=10) | SUB recv=14200800 itps=65673.82 p99=13986.30ms conn=29125246975/6998637794.07,9198522359.45,14200800,1000,1000,1000,0,0,0,0,0,0,3586961035.27,3793037870.96,3803845574.79,3597006290.28,65694
+[status] PUB sent=154130 tps=419 (pubs=10) | SUB recv=14322319 itps=61023.22 p99=13869.80ms conn=29125246975/6977521695.97,9162317854.02,14322319,1000,1000,1000,0,0,0,0,0,0,4739279357.46,4979563849.85,4999640886.53,4787241722.02,61019
+[status] PUB sent=158130 tps=427 (pubs=10) | SUB recv=14475800 itps=66896.50 p99=13717.90ms conn=29125246975/6965143401.75,9114505854.83,14475800,1000,1000,1000,0,0,0,0,0,0,6203040617.31,6418003383.14,6428952930.64,6214988294.70,66909
+[status] PUB sent=162130 tps=436 (pubs=10) | SUB recv=14600470 itps=64177.80 p99=13586.40ms conn=29125246975/6966632070.70,9075579826.55,14600470,1000,1000,1000,0,0,0,0,0,0,7345545904.11,7651234583.90,7661336209.19,7410930051.96,64170
+[status] PUB sent=166130 tps=444 (pubs=10) | SUB recv=14701995 itps=15945.73 p99=13482.40ms conn=29125246975/6975329648.81,9044829998.88,14701995,1000,1000,1000,0,0,0,0,0,0,8790682658.31,8880064722.86,8888453330.86,8789516800.58,15950
+[status] PUB sent=170130 tps=452 (pubs=10) | SUB recv=14805800 itps=52261.63 p99=13378.50ms conn=29125246975/6990787615.80,9014997387.79,14805800,1000,1000,1000,0,0,0,0,0,0,9468089396.89,9555066016.68,9562571613.32,9464228230.00,52250
+[status] PUB sent=174130 tps=461 (pubs=10) | SUB recv=14952186 itps=78032.93 p99=13230.00ms conn=29125246975/7024616140.11,8977300463.49,14952186,1000,1000,1000,0,0,0,0,0,0,10647033487.29,11042244321.49,11058787391.80,10751705427.31,78030
+[status] PUB sent=176130 tps=465 (pubs=10) | SUB recv=15082185 itps=53630.68 p99=13098.00ms conn=29125246975/7064896999.64,8949014738.60,15082185,1000,1000,1000,0,0,0,0,0,0,12039947590.64,12194179029.98,12208497510.66,12046426370.17,53626
+[status] PUB sent=180130 tps=473 (pubs=10) | SUB recv=15245800 itps=61560.93 p99=13150.00ms conn=29125246975/7127783535.78,8921418337.46,15245800,1000,1000,1000,0,0,0,0,0,0,13386226970.07,13530864212.14,13539951859.45,13354251746.67,61573
+[status] PUB sent=184130 tps=481 (pubs=10) | SUB recv=15368239 itps=61956.50 p99=13418.60ms conn=29125246975/7184771710.73,8908583740.14,15368239,1000,1000,1000,0,0,0,0,0,0,14504994553.16,14776709934.71,14795859672.62,14556459034.65,61939
+[status] PUB sent=188130 tps=489 (pubs=10) | SUB recv=15484534 itps=31741.78 p99=13679.90ms conn=29125246975/7246973733.81,8903909624.21,15484534,1000,1000,1000,0,0,0,0,0,0,16005568448.22,16096846587.67,16102868161.62,15995620537.39,31743
+[status] PUB sent=192130 tps=496 (pubs=10) | SUB recv=15575800 itps=52252.97 p99=13883.20ms conn=29125246975/7300431357.41,8905076426.53,15575800,1000,1000,1000,0,0,0,0,0,0,16623130515.21,16711873157.74,16719467055.51,16619666382.34,52250
+[status] PUB sent=196130 tps=504 (pubs=10) | SUB recv=15722809 itps=77762.48 p99=14162.70ms conn=29125246975/7396410261.51,8918346811.57,15722809,1000,1000,1000,0,0,0,0,0,0,17807374042.52,18170902540.46,18187665300.60,17875206240.08,77759
+[status] PUB sent=200130 tps=512 (pubs=10) | SUB recv=15850800 itps=52261.24 p99=14436.00ms conn=29125246975/7489382784.28,8941879366.38,15850800,1000,1000,1000,0,0,0,0,0,0,19311523821.25,19400711703.09,19410427125.76,19304875625.31,52267
+[status] PUB sent=202130 tps=516 (pubs=10) | SUB recv=15988573 itps=73174.84 p99=14720.70ms conn=29125246975/7599124724.88,8980845019.57,15988573,1000,1000,1000,0,0,0,0,0,0,20464909063.01,20798262658.06,20804488168.76,20516668523.60,73175
+[status] PUB sent=206130 tps=523 (pubs=10) | SUB recv=16125800 itps=56256.04 p99=15005.60ms conn=29125246975/7717926383.30,9034068097.70,16125800,1000,1000,1000,0,0,0,0,0,0,21995593355.57,22090383149.92,22100600126.47,21954361804.36,56263
+[status] PUB sent=210130 tps=531 (pubs=10) | SUB recv=16253259 itps=66942.91 p99=15286.10ms conn=29125246975/7836692323.05,9097255751.93,16253259,1000,1000,1000,0,0,0,0,0,0,23069432936.40,23393841403.72,23412178842.16,23140481582.37,66938
+[status] PUB sent=214130 tps=538 (pubs=10) | SUB recv=16395341 itps=56345.09 p99=15598.40ms conn=29125246975/7978162066.28,9183310427.70,16395341,1000,1000,1000,0,0,0,0,0,0,24607988041.18,24747600625.08,24757010665.88,24585616982.14,56363
+[status] PUB sent=218130 tps=545 (pubs=10) | SUB recv=16456900 itps=53356.71 p99=15731.20ms conn=29125246975/8042303815.85,9225723370.63,16456900,1000,1000,1000,0,0,0,0,0,0,25197994743.08,25293123287.41,25304192790.75,25192865979.03,53350
+[status] PUB sent=222130 tps=553 (pubs=10) | SUB recv=16600695 itps=75802.60 p99=16069.50ms conn=29125246975/8199229660.34,9337959120.80,16600695,1000,1000,1000,0,0,0,0,0,0,26403914766.04,26756317754.50,26770066178.25,26470915285.98,75799
+[status] PUB sent=226130 tps=560 (pubs=10) | SUB recv=16730800 itps=57117.73 p99=16379.80ms conn=29125246975/8349839004.98,9455892687.23,16730800,1000,1000,1000,0,0,0,0,0,0,28005476407.61,28103874877.85,28112631655.88,27959223414.87,57121
+[status] PUB sent=230130 tps=567 (pubs=10) | SUB recv=16851800 itps=60497.81 p99=16650.60ms conn=29712449535/8497237054.44,9579984382.50,16851800,1000,1000,1000,0,0,0,0,0,0,29120671370.64,29328098768.45,29335724775.73,29158930911.47,60500
+[status] PUB sent=232130 tps=570 (pubs=10) | SUB recv=16996944 itps=69737.55 p99=16985.00ms conn=31121735679/8682640092.37,9746087134.80,16996944,1000,1000,1000,0,0,0,0,0,0,30554113755.54,30863435555.43,30877919173.08,30594508082.32,69732
+[status] PUB sent=236130 tps=577 (pubs=10) | SUB recv=17115800 itps=52249.45 p99=17206.70ms conn=32245809151/8841663361.27,9896624638.08,17115800,1000,1000,1000,0,0,0,0,0,0,31933223126.58,32019758240.68,32026822331.63,31923878619.64,52250
+[status] PUB sent=240130 tps=584 (pubs=10) | SUB recv=17258878 itps=74664.18 p99=17526.70ms conn=33705426943/9040954017.08,10093802148.45,17258878,1000,1000,1000,0,0,0,0,0,0,33091579763.04,33470182315.65,33485713437.34,33187507789.31,74657
+[status] PUB sent=244130 tps=591 (pubs=10) | SUB recv=17390800 itps=57807.97 p99=17788.90ms conn=35064381439/9232341956.82,10290967036.44,17390800,1000,1000,1000,0,0,0,0,0,0,34732985645.85,34832207868.52,34841821795.12,34672423422.88,57815
+[status] PUB sent=248130 tps=598 (pubs=10) | SUB recv=17511439 itps=60215.96 p99=18083.20ms conn=36440113151/9413905958.90,10484574460.00,17511439,1000,1000,1000,0,0,0,0,0,0,35840237884.15,36044871490.05,36056969899.99,35869236116.94,60209
+[status] PUB sent=252130 tps=605 (pubs=10) | SUB recv=17611241 itps=19799.47 p99=18293.30ms conn=37480300543/9568562697.84,10653537380.34,17611241,1000,1000,1000,0,0,0,0,0,0,37299479437.22,37380569314.56,37380569314.56,37276177749.33,19800
+[status] PUB sent=256130 tps=611 (pubs=10) | SUB recv=17720800 itps=52294.27 p99=18538.80ms conn=38285606911/9741942768.78,10845879497.04,17720800,1000,1000,1000,0,0,0,0,0,0,37967529580.48,38047366208.91,38057981662.37,37945954108.65,52294
+[status] PUB sent=258350 tps=614 (pubs=10) | SUB recv=17859749 itps=73540.89 p99=18826.50ms conn=39728447487/9968598486.98,11102791809.43,17859749,1000,1000,1000,0,0,0,0,0,0,39113879715.59,39456738216.43,39468397559.10,39166169265.40,73539
+[status] PUB sent=258750 tps=612 (pubs=10) | SUB recv=17995800 itps=55500.05 p99=19141.10ms conn=40936407039/10197194086.99,11366602440.43,17995800,1000,1000,1000,0,0,0,0,0,0,40643128246.65,40738397808.25,40746709345.63,40602465788.88,55510
+[status] PUB sent=259150 tps=610 (pubs=10) | SUB recv=18081435 itps=22007.39 p99=19095.80ms conn=41238396927/10176782012.26,11381428653.75,18081435,1000,1000,1000,0,0,0,0,0,0,2352063.86,189963095.37,215589178.64,44893487.85,22009
+[status] PUB sent=259550 tps=608 (pubs=10) | SUB recv=18121439 itps=18999.77 p99=19060.80ms conn=41238396927/10154320539.20,11378883766.30,18121439,1000,1000,1000,0,0,0,0,0,0,1894983.76,3451570.79,3896867.33,1963531.67,19000
+[status] PUB sent=259950 tps=606 (pubs=10) | SUB recv=18161440 itps=19001.21 p99=19026.00ms conn=41238396927/10131959644.09,11376305698.67,18161440,1000,1000,1000,0,0,0,0,0,0,1883074.59,3446412.12,3695994.99,1928842.64,19001
+[status] PUB sent=260150 tps=605 (pubs=10) | SUB recv=18201440 itps=19001.81 p99=18998.20ms conn=41238396927/10109697607.97,11373694759.30,18201440,1000,1000,1000,0,0,0,0,0,0,1885293.05,3468125.05,3627961.10,1969850.46,19001
+[status] PUB sent=260550 tps=603 (pubs=10) | SUB recv=18241441 itps=19003.75 p99=18965.30ms conn=41238396927/10087532213.39,11371051703.70,18241441,1000,1000,1000,0,0,0,0,0,0,1517210.45,3416675.44,3531646.43,1702575.66,19004
+[status] PUB sent=260950 tps=601 (pubs=10) | SUB recv=18281436 itps=18997.47 p99=18930.40ms conn=41238396927/10065466957.31,11368377224.38,18281436,1000,1000,1000,0,0,0,0,0,0,1193597.23,3410848.78,3833341.76,1560971.62,18998
+[status] PUB sent=261350 tps=599 (pubs=10) | SUB recv=18321440 itps=18998.43 p99=18900.90ms conn=41238396927/10043493828.10,11365669968.76,18321440,1000,1000,1000,0,0,0,0,0,0,1880726.39,3466205.09,4080079.97,1975280.75,18997
+[status] PUB sent=261750 tps=598 (pubs=10) | SUB recv=18361440 itps=19000.33 p99=18876.10ms conn=41238396927/10021618495.64,11362932056.77,18361440,1000,1000,1000,0,0,0,0,0,0,1882174.49,3432453.58,3768878.00,1920772.53,19000
+[status] PUB sent=262150 tps=596 (pubs=10) | SUB recv=18401438 itps=18994.77 p99=18847.60ms conn=41238396927/9999839470.59,11360163576.87,18401438,1000,1000,1000,0,0,0,0,0,0,1917107.59,3799157.16,5705916.75,2047334.99,18996
+[status] PUB sent=262550 tps=594 (pubs=10) | SUB recv=18441439 itps=19004.67 p99=18822.70ms conn=41238396927/9978153259.58,11357364760.21,18441439,1000,1000,1000,0,0,0,0,0,0,1962740.08,3473473.81,5130914.34,2002751.36,19005
+[status] PUB sent=262950 tps=592 (pubs=10) | SUB recv=18481436 itps=18996.85 p99=18795.60ms conn=41238396927/9956563070.06,11354536531.08,18481436,1000,1000,1000,0,0,0,0,0,0,1912293.18,3504608.65,4213380.40,1947358.41,18998
+[status] PUB sent=263350 tps=590 (pubs=10) | SUB recv=18514635 itps=12196.08 p99=18777.70ms conn=41238396927/9938713190.96,11352158076.58,18514635,1000,1000,1000,0,0,0,0,0,0,1891105.26,3450728.71,3618492.25,1961784.96,12196
+[status] PUB sent=263750 tps=589 (pubs=10) | SUB recv=18547436 itps=4999.08 p99=18752.60ms conn=41238396927/9921140018.62,11349811188.31,18547436,1000,1000,1000,0,0,0,0,0,0,1860563.37,3469787.87,3854378.84,1910165.66,4999
+[status] PUB sent=264150 tps=587 (pubs=10) | SUB recv=18581437 itps=18998.66 p99=18730.50ms conn=41238396927/9902989470.27,11347338332.47,18581437,1000,1000,1000,0,0,0,0,0,0,1916462.08,3481159.20,4218355.55,1945578.02,18999
+[status] PUB sent=264550 tps=585 (pubs=10) | SUB recv=18621436 itps=18998.34 p99=18706.60ms conn=41238396927/9881722028.17,11344409263.41,18621436,1000,1000,1000,0,0,0,0,0,0,1890610.23,3444085.18,3736461.59,1924245.78,18998
+[status] PUB sent=264950 tps=584 (pubs=10) | SUB recv=18661436 itps=18996.87 p99=18683.10ms conn=41238396927/9860545218.93,11341452309.92,18661436,1000,1000,1000,0,0,0,0,0,0,1980127.91,3737062.88,5694303.93,2092528.73,18997
+[status] PUB sent=265350 tps=582 (pubs=10) | SUB recv=18701435 itps=18993.80 p99=18656.30ms conn=41238396927/9839459435.71,11338468085.36,18701435,1000,1000,1000,0,0,0,0,0,0,1929890.96,3455367.78,3640603.59,1950384.20,18995
+[status] PUB sent=265750 tps=580 (pubs=10) | SUB recv=18741442 itps=19004.62 p99=18624.70ms conn=41238396927/9818459551.07,11335456162.44,18741442,1000,1000,1000,0,0,0,0,0,0,1933306.31,3498832.03,3666046.60,1971636.93,19003
+[status] PUB sent=266150 tps=579 (pubs=10) | SUB recv=18781435 itps=19000.25 p99=18590.80ms conn=41238396927/9797556424.60,11332418695.36,18781435,1000,1000,1000,0,0,0,0,0,0,1911282.44,3468816.14,3568968.73,1960274.16,19000
+[status] PUB sent=266550 tps=577 (pubs=10) | SUB recv=18821450 itps=19011.54 p99=18559.00ms conn=41238396927/9776730181.82,11329353735.79,18821450,1000,1000,1000,0,0,0,0,0,0,1040146.82,3344574.21,3636980.50,1409488.37,19012
+[status] PUB sent=266950 tps=575 (pubs=10) | SUB recv=18861438 itps=19002.40 p99=18530.40ms conn=41238396927/9756006607.40,11326264766.26,18861438,1000,1000,1000,0,0,0,0,0,0,1904423.86,3415829.97,3637870.53,1969056.62,19001
+[status] PUB sent=267350 tps=574 (pubs=10) | SUB recv=18901435 itps=18999.16 p99=18495.20ms conn=41238396927/9735366251.80,11323149468.29,18901435,1000,1000,1000,0,0,0,0,0,0,1928827.96,3458770.25,3629560.88,1971745.93,18999
+[status] PUB sent=267750 tps=572 (pubs=10) | SUB recv=18941438 itps=19001.99 p99=18458.00ms conn=41238396927/9714810042.13,11320008548.57,18941438,1000,1000,1000,0,0,0,0,0,0,1956966.20,3489349.63,3733073.48,1986629.85,19001
+[status] PUB sent=268150 tps=570 (pubs=10) | SUB recv=18981436 itps=18998.51 p99=18421.40ms conn=41238396927/9694343081.45,11316843263.83,18981436,1000,1000,1000,0,0,0,0,0,0,1967303.77,3509015.29,3727167.66,2002832.15,18999
+[status] PUB sent=268550 tps=569 (pubs=10) | SUB recv=19021437 itps=18999.24 p99=18392.90ms conn=41238396927/9673960609.19,11313653421.86,19021437,1000,1000,1000,0,0,0,0,0,0,1968661.12,3641110.81,4389031.70,2013046.53,18999
+[status] PUB sent=268950 tps=567 (pubs=10) | SUB recv=19061437 itps=18999.73 p99=18364.40ms conn=41238396927/9653664152.60,11310439693.30,19061437,1000,1000,1000,0,0,0,0,0,0,1891765.43,3421036.41,3625895.47,1971309.27,19000
+[status] PUB sent=269350 tps=566 (pubs=10) | SUB recv=19101435 itps=18998.49 p99=18337.50ms conn=41238396927/9633453699.97,11307202468.46,19101435,1000,1000,1000,0,0,0,0,0,0,1911525.26,3506672.29,3685338.56,1983411.60,18998
+[status] PUB sent=269750 tps=564 (pubs=10) | SUB recv=19141433 itps=18999.26 p99=18309.30ms conn=41238396927/9613327769.08,11303941917.99,19141433,1000,1000,1000,0,0,0,0,0,0,1965163.55,3471447.18,3709018.95,1979740.10,18999
+[status] PUB sent=270150 tps=563 (pubs=10) | SUB recv=19181436 itps=18998.02 p99=18285.50ms conn=41238396927/9593283226.37,11300658013.81,19181436,1000,1000,1000,0,0,0,0,0,0,1926253.06,3472794.29,3647888.97,1972766.12,18999
+[status] PUB sent=276170 tps=573 (pubs=10) | SUB recv=19329505 itps=7698.99 p99=18190.30ms conn=41238396927/9521093898.56,11287235611.57,19329505,1000,1000,1000,0,0,0,0,0,0,591247066.43,644349951,652101923.57,590216092.52,7700
+[status] PUB sent=282170 tps=583 (pubs=10) | SUB recv=19544103 itps=44687.81 p99=18049.80ms conn=41238396927/9431296132.57,11257473690.55,19544103,1000,1000,1000,0,0,0,0,0,0,1902211386.16,2220131910.79,2228716697.17,1964611653.42,44695
+[status] PUB sent=288170 tps=593 (pubs=10) | SUB recv=19746400 itps=84081.42 p99=17867.30ms conn=41238396927/9365128794.23,11218702663.34,19746400,1000,1000,1000,0,0,0,0,0,0,3394536094.39,3829873407.15,3838242363.62,3542490851.06,84093
+[status] PUB sent=294170 tps=603 (pubs=10) | SUB recv=19930100 itps=103728.19 p99=17747.00ms conn=41238396927/9321621022.54,11176109228.77,19930100,1000,1000,1000,0,0,0,0,0,0,4852236234.40,5242806770.83,5251305564.78,4982953386.10,103729
+[status] PUB sent=300170 tps=613 (pubs=10) | SUB recv=20095100 itps=65722.84 p99=17649.70ms conn=41238396927/9294315036.41,11134230273.38,20095100,1000,1000,1000,0,0,0,0,0,0,6435221159.82,6531339435.53,6536378661.46,6382105283.55,65740
+[status] PUB sent=306170 tps=622 (pubs=10) | SUB recv=20292952 itps=82361.51 p99=17510.40ms conn=41238396927/9275910513.33,11081449634.01,20292952,1000,1000,1000,0,0,0,0,0,0,7710258627.22,8044713982.60,8053711322.89,7828776390.60,82352
+[status] PUB sent=312170 tps=632 (pubs=10) | SUB recv=20480100 itps=104505.91 p99=17356.00ms conn=41238396927/9272357112.76,11030828284.20,20480100,1000,1000,1000,0,0,0,0,0,0,9094575588.05,9380229765.74,9394799453.32,9174420527.39,104500
+[status] PUB sent=318170 tps=642 (pubs=10) | SUB recv=20677053 itps=81454.46 p99=17215.40ms conn=41238396927/9280659104.78,10978573960.51,20677053,1000,1000,1000,0,0,0,0,0,0,10448691647.26,10780951296.79,10788221155.96,10561692746.97,81453
+[status] PUB sent=324167 tps=651 (pubs=10) | SUB recv=20865096 itps=104498.68 p99=17102.70ms conn=41238396927/9301989167.27,10931355102.69,20865096,1000,1000,1000,0,0,0,0,0,0,11811594842.33,12231466443.81,12240296574.39,11962163356.79,104496
+[status] PUB sent=330164 tps=660 (pubs=10) | SUB recv=21047347 itps=113376.49 p99=16972.70ms conn=41238396927/9334100664.54,10889390686.47,21047347,1000,1000,1000,0,0,0,0,0,0,13175993768.90,13452925264.37,13475242970.36,13203398452.60,113377
+[status] PUB sent=339164 tps=674 (pubs=10) | SUB recv=21250100 itps=104496.82 p99=16808.20ms conn=41238396927/9382014125.07,10848376620.35,21250100,1000,1000,1000,0,0,0,0,0,0,14531718089.11,14940993858.37,14949382466.37,14673145686.20,104500
+[status] PUB sent=345170 tps=684 (pubs=10) | SUB recv=21415100 itps=96333.20 p99=16685.30ms conn=41238396927/9431173551.24,10820950170.25,21415100,1000,1000,1000,0,0,0,0,0,0,15953673121.61,16294639054.80,16302754627.53,16032425991.63,96349
+[status] PUB sent=351167 tps=693 (pubs=10) | SUB recv=21581063 itps=57834.64 p99=16882.80ms conn=41238396927/9489829946.84,10799881232.48,21581063,1000,1000,1000,0,0,0,0,0,0,17477859537.25,17563055204.23,17576553376.85,17444320769.08,57842
+[status] PUB sent=357170 tps=702 (pubs=10) | SUB recv=21799843 itps=104241.91 p99=17192.30ms conn=41238396927/9580619977.78,10783424742.61,21799843,1000,1000,1000,0,0,0,0,0,0,18863984256.96,19181515798.98,19193707417.50,18956741293.13,104243
+[status] PUB sent=363170 tps=711 (pubs=10) | SUB recv=21965100 itps=86724.95 p99=17498.70ms conn=41238396927/9657908341.23,10779432544.40,21965100,1000,1000,1000,0,0,0,0,0,0,20082600830.84,20293155307.46,20305889413.03,20088477122.00,86747
+[status] PUB sent=369170 tps=720 (pubs=10) | SUB recv=22156418 itps=75830.03 p99=17765.30ms conn=41238396927/9757487912.76,10785776897.11,22156418,1000,1000,1000,0,0,0,0,0,0,21535092216.04,21856704795.00,21871540033.54,21630558908.80,75818
+[status] PUB sent=375170 tps=728 (pubs=10) | SUB recv=22334986 itps=89406.37 p99=18067.90ms conn=41238396927/9860743026.22,10804053911.69,22334986,1000,1000,1000,0,0,0,0,0,0,22895444512.85,23319319694.50,23334640029.66,23027289414.29,89386
+[status] PUB sent=381170 tps=737 (pubs=10) | SUB recv=22526100 itps=5499.76 p99=18364.50ms conn=41238396927/9981181512.46,10836660971.24,22526100,1000,1000,1000,0,0,0,0,0,0,24763170815,25098715135,25098715135,24867656266.85,5500
+[status] PUB sent=387170 tps=746 (pubs=10) | SUB recv=22791908 itps=54291.84 p99=18795.40ms conn=41238396927/10163633536.22,10903611665.35,22791908,1000,1000,1000,0,0,0,0,0,0,26430139286.85,26523601179.04,26539719592.51,26427250383.14,54294
+[status] PUB sent=393170 tps=755 (pubs=10) | SUB recv=22992542 itps=86958.91 p99=19089.00ms conn=41238396927/10313876124.35,10973511277.71,22992542,1000,1000,1000,0,0,0,0,0,0,27693397403.25,28108083437.67,28117413933.26,27820692133.00,86942
+[status] PUB sent=399167 tps=763 (pubs=10) | SUB recv=23175100 itps=104499.97 p99=19362.60ms conn=41238396927/10460623223.60,11053624385.92,23175100,1000,1000,1000,0,0,0,0,0,0,29094341577.11,29542028340.89,29551741465.95,29256736038.32,104500
+[status] PUB sent=408170 tps=776 (pubs=10) | SUB recv=23340100 itps=79992.10 p99=19624.20ms conn=41238396927/10600869343.44,11139230866.90,23340100,1000,1000,1000,0,0,0,0,0,0,30568925080.22,30837732328.74,30845727859.99,30622066352.49,80007
+[status] PUB sent=414167 tps=784 (pubs=10) | SUB recv=23505100 itps=64672.60 p99=19872.60ms conn=41238396927/10748460545.26,11238054515.02,23505100,1000,1000,1000,0,0,0,0,0,0,32098528385.77,32178510960.10,32186245093.55,32026259586.75,64689
+[status] PUB sent=420170 tps=793 (pubs=10) | SUB recv=23670100 itps=63921.33 p99=20117.60ms conn=41238396927/10903969955.70,11351642538.34,23670100,1000,1000,1000,0,0,0,0,0,0,33562530521.25,33650937268.12,33656280041.39,33497313447.65,63937
+[status] PUB sent=426167 tps=801 (pubs=10) | SUB recv=23835100 itps=69517.56 p99=20370.90ms conn=41238396927/11067522166.13,11480694850.55,23835100,1000,1000,1000,0,0,0,0,0,0,34982591395.06,35148725235.17,35148725235.17,34951748274.89,69533
+[status] PUB sent=432170 tps=809 (pubs=10) | SUB recv=24005389 itps=56019.51 p99=20664.20ms conn=41238396927/11243648669.17,11628186075.79,24005389,1000,1000,1000,0,0,0,0,0,0,36348442109.73,36494602788.36,36516534737.11,36359125654.51,56017
+[status] PUB sent=438170 tps=818 (pubs=10) | SUB recv=24166423 itps=53322.13 p99=20899.60ms conn=41238396927/11417566367.88,11782341737.86,24166423,1000,1000,1000,0,0,0,0,0,0,37833675571.61,37932214261.24,37940653530.03,37828185327.95,53318
+[status] PUB sent=444170 tps=826 (pubs=10) | SUB recv=24440100 itps=76574.49 p99=21327.20ms conn=41238396927/11728159793.16,12074426112.55,24440100,1000,1000,1000,0,0,0,0,0,0,39870471505.94,40121575909.41,40125317373.17,39923985524.23,76580
+[status] PUB sent=450168 tps=834 (pubs=10) | SUB recv=24616123 itps=61106.90 p99=21587.80ms conn=41909485567/11937023096.23,12280390581.40,24616123,1000,1000,1000,0,0,0,0,0,0,41353555403.69,41563965649.59,41584273841.51,41380065460.08,61094
+[status] PUB sent=450777 tps=830 (pubs=10) | SUB recv=24817560 itps=96976.01 p99=21927.80ms conn=43285217279/12184654134.27,12533136453.47,24817560,1000,1000,1000,0,0,0,0,0,0,42736705789.14,43133648559.75,43139138183.87,42851360481.42,96960
+[status] PUB sent=451177 tps=828 (pubs=10) | SUB recv=24971002 itps=86134.36 p99=22065.40ms conn=44191186943/12316082403.13,12686675663.62,24971002,1000,1000,1000,0,0,0,0,0,0,43905294113.59,43990322748.96,44004990542.08,26660895059.75,86136
+[status] PUB sent=451577 tps=826 (pubs=10) | SUB recv=25010978 itps=18990.05 p99=22048.70ms conn=44191186943/12296402938.61,12686071026.62,25010978,1000,1000,1000,0,0,0,0,0,0,3682456.47,5906904.12,6394789.06,3758022.90,18990
+[status] PUB sent=451978 tps=823 (pubs=10) | SUB recv=25050982 itps=18984.43 p99=22030.20ms conn=44191186943/12276772611.06,12685437476.46,25050982,1000,1000,1000,0,0,0,0,0,0,3651975.63,5844415.24,6200202.38,3668338.42,18984
+[status] PUB sent=452377 tps=821 (pubs=10) | SUB recv=25090982 itps=18976.45 p99=22011.80ms conn=44191186943/12257206842.78,12684775681.84,25090982,1000,1000,1000,0,0,0,0,0,0,3625444.83,5813975.96,6195372.53,3729851.56,18978
+[status] PUB sent=452777 tps=819 (pubs=10) | SUB recv=25150981 itps=19000.66 p99=21991.60ms conn=44191186943/12227975367.95,12683730708.68,25150981,1000,1000,1000,0,0,0,0,0,0,3550373.31,5756214.44,6190809.07,3664014.15,19001
+[status] PUB sent=453178 tps=817 (pubs=10) | SUB recv=25190988 itps=18971.01 p99=21978.20ms conn=44191186943/12208560688.17,12683000072.50,25190988,1000,1000,1000,0,0,0,0,0,0,3734282.71,6572196.81,9144590.38,3850826.40,18972
+[status] PUB sent=453777 tps=813 (pubs=10) | SUB recv=25230978 itps=19017.52 p99=21959.70ms conn=44191186943/12189216627.58,12682241597.36,25230978,1000,1000,1000,0,0,0,0,0,0,3689782.32,5927151.36,6334546.57,3710085.42,19018
+[status] PUB sent=454177 tps=811 (pubs=10) | SUB recv=25271000 itps=19013.06 p99=21941.30ms conn=44191186943/12169918056.88,12681455821.58,25271000,1000,1000,1000,0,0,0,0,0,0,3468958.34,5589542.40,6023858.43,3507562.85,19013
+[status] PUB sent=454577 tps=809 (pubs=10) | SUB recv=25310988 itps=19013.54 p99=21924.70ms conn=44191186943/12150696805.85,12680643990.68,25310988,1000,1000,1000,0,0,0,0,0,0,3400487.07,5965086.62,7233220.02,3487352.13,19012
+[status] PUB sent=454977 tps=807 (pubs=10) | SUB recv=25350982 itps=18984.52 p99=21904.40ms conn=44191186943/12131533324.23,12679805517.37,25350982,1000,1000,1000,0,0,0,0,0,0,3468395.20,5520833.29,5850332.80,3571336.96,18984
+[status] PUB sent=455378 tps=805 (pubs=10) | SUB recv=25410998 itps=19000.72 p99=21870.80ms conn=44191186943/12102889233.62,12678498200.30,25410998,1000,1000,1000,0,0,0,0,0,0,3453069.01,5569105.10,6023492.08,3513729.22,19001
+[status] PUB sent=455777 tps=802 (pubs=10) | SUB recv=25450967 itps=18997.23 p99=21847.50ms conn=44191186943/12083888039.12,12677595210.86,25450967,1000,1000,1000,0,0,0,0,0,0,3387498.48,5593379.26,5965096.92,3437393.81,18997
+[status] PUB sent=456377 tps=799 (pubs=10) | SUB recv=25490994 itps=19014.02 p99=21813.70ms conn=44191186943/12064919231.27,12676664988.80,25490994,1000,1000,1000,0,0,0,0,0,0,3670296.16,5901108.78,6528770.86,3804874.76,19015
+[status] PUB sent=456777 tps=797 (pubs=10) | SUB recv=25530981 itps=18985.33 p99=21781.90ms conn=44191186943/12046028799.11,12675710340.21,25530981,1000,1000,1000,0,0,0,0,0,0,3617421.71,5866053.28,6275383.93,3662817.52,18986
+[status] PUB sent=457177 tps=795 (pubs=10) | SUB recv=25570964 itps=18980.01 p99=21751.70ms conn=44191186943/12027199335.47,12674730640.66,25570964,1000,1000,1000,0,0,0,0,0,0,3585260.49,5901162.31,6288903.09,3645051.55,18980
+[status] PUB sent=457577 tps=793 (pubs=10) | SUB recv=25630985 itps=19003.38 p99=21709.70ms conn=44191186943/11999043403.06,12673213456.19,25630985,1000,1000,1000,0,0,0,0,0,0,3564468.80,5809963.23,6216037.13,3618704.04,19003
+[status] PUB sent=457997 tps=791 (pubs=10) | SUB recv=25670980 itps=18986.98 p99=21687.90ms conn=44191186943/11980354880.57,12672171721.74,25670980,1000,1000,1000,0,0,0,0,0,0,3698236.78,5877134.04,6374835.90,3720735.96,18987
+[status] PUB sent=458577 tps=788 (pubs=10) | SUB recv=25710991 itps=19000.03 p99=21666.10ms conn=44191186943/11961716981.23,12671105352.66,25710991,1000,1000,1000,0,0,0,0,0,0,3604499.59,5687790.75,6223933.63,3599092.66,18999
+[status] PUB sent=458977 tps=786 (pubs=10) | SUB recv=25750996 itps=19008.57 p99=21644.30ms conn=44191186943/11943139822.34,12670015036.57,25750996,1000,1000,1000,0,0,0,0,0,0,3530209.02,5620662.01,6292757.99,3617559.94,19009
+[status] PUB sent=459377 tps=784 (pubs=10) | SUB recv=25791004 itps=18991.48 p99=21624.70ms conn=44191186943/11924618832.21,12668900869.84,25791004,1000,1000,1000,0,0,0,0,0,0,3570583.26,5767935.75,6305841.47,3594557.20,18992
+[status] PUB sent=459777 tps=782 (pubs=10) | SUB recv=25851001 itps=18999.13 p99=21600.70ms conn=44191186943/11896951877.96,12667185792.27,25851001,1000,1000,1000,0,0,0,0,0,0,3640962.89,5836512.68,6229443.22,3663185.67,18998
+[status] PUB sent=460377 tps=779 (pubs=10) | SUB recv=25890976 itps=19006.90 p99=21578.90ms conn=44191186943/11878589042.52,12666013966.70,25890976,1000,1000,1000,0,0,0,0,0,0,3605044.76,5843214.08,6288738.45,3687336.82,19008
+[status] PUB sent=460777 tps=777 (pubs=10) | SUB recv=25930975 itps=18988.25 p99=21564.60ms conn=44191186943/11860271793.28,12664818411.03,25930975,1000,1000,1000,0,0,0,0,0,0,3637626.91,5857428.27,6203098.61,3684700.70,18989
+[status] PUB sent=461177 tps=775 (pubs=10) | SUB recv=25970984 itps=19006.81 p99=21547.00ms conn=44191186943/11842006563.74,12663599648.59,25970984,1000,1000,1000,0,0,0,0,0,0,3679061.35,6113206.48,6972658.78,3742354.78,19007
+[status] PUB sent=461577 tps=773 (pubs=10) | SUB recv=26021994 itps=9995.74 p99=21524.30ms conn=44191186943/11818800105.24,12662001006.64,26021994,1000,1000,1000,0,0,0,0,0,0,3413186.58,5777470.72,6524197.14,3500911.91,9995
+[status] PUB sent=462178 tps=770 (pubs=10) | SUB recv=26070991 itps=19003.74 p99=21501.70ms conn=44191186943/11796594719.46,12660455825.38,26070991,1000,1000,1000,0,0,0,0,0,0,3499236.76,5559018.15,5840813.53,3506793.40,19004
+[status] PUB sent=472182 tps=784 (pubs=10) | SUB recv=26178058 itps=82895.68 p99=21455.50ms conn=44191186943/11749392477.72,12655983402.81,26178058,1000,1000,1000,0,0,0,0,0,0,275414021.37,510841249.08,518832627.51,317653069.52,82884
+[status] PUB sent=482182 tps=798 (pubs=10) | SUB recv=26381991 itps=95497.72 p99=21351.90ms conn=44191186943/11669069237.57,12639838517.57,26381991,1000,1000,1000,0,0,0,0,0,0,1638675956.81,1962220751.33,1980509009.58,1723502337.90,95492
+[status] PUB sent=492182 tps=812 (pubs=10) | SUB recv=26676711 itps=80310.37 p99=21182.40ms conn=44191186943/11577033427.90,12600157174.62,26676711,1000,1000,1000,0,0,0,0,0,0,4065936001.42,4465456761.93,4471288343.90,4239377113.32,80311
+[status] PUB sent=507187 tps=833 (pubs=10) | SUB recv=26871949 itps=84928.44 p99=21088.00ms conn=44191186943/11531632615.50,12565598769.02,26871949,1000,1000,1000,0,0,0,0,0,0,5687499875.83,5958700984.98,5964520223.78,5746844241.71,84940
+[status] PUB sent=517182 tps=846 (pubs=10) | SUB recv=27085900 itps=104496.62 p99=20968.20ms conn=44191186943/11495716443.41,12522436499.95,27085900,1000,1000,1000,0,0,0,0,0,0,7229876330.79,7677783847.42,7684847938.37,7426852728.15,104500
+[status] PUB sent=527187 tps=860 (pubs=10) | SUB recv=27261115 itps=75301.95 p99=20888.30ms conn=44191186943/11477157463.19,12484301252.76,27261115,1000,1000,1000,0,0,0,0,0,0,8921814423.20,9206158178.81,9223983553.06,9020065251.81,75302
+[status] PUB sent=537182 tps=873 (pubs=10) | SUB recv=27576414 itps=100035.48 p99=20742.40ms conn=44191186943/11467332720.52,12413324778.55,27576414,1000,1000,1000,0,0,0,0,0,0,11303199544.80,11753530173.39,11758689619.39,11489913886.20,100014
+[status] PUB sent=552182 tps=894 (pubs=10) | SUB recv=27754142 itps=78195.91 p99=20650.10ms conn=44191186943/11474753534.93,12373901902.16,27754142,1000,1000,1000,0,0,0,0,0,0,12900219692.25,13207686554.39,13211807855.67,13007628580.11,78195
+[status] PUB sent=562182 tps=907 (pubs=10) | SUB recv=27965900 itps=104500.60 p99=20501.80ms conn=44191186943/11495426497.94,12329317409.78,27965900,1000,1000,1000,0,0,0,0,0,0,14439001895.42,14887130164.89,14893752750.16,14633554506.85,104500
+[status] PUB sent=572187 tps=920 (pubs=10) | SUB recv=28152514 itps=83092.39 p99=20404.30ms conn=44191186943/11524355806.60,12293543718.96,28152514,1000,1000,1000,0,0,0,0,0,0,16181201190.44,16517518987.64,16525392078.79,16281210550.39,83086
+[status] PUB sent=582182 tps=933 (pubs=10) | SUB recv=28457525 itps=101135.27 p99=20273.80ms conn=44191186943/11592419549.30,12245188235.02,28457525,1000,1000,1000,0,0,0,0,0,0,18509450402.97,18973426488.96,18979625390.31,18702810949.84,101125
+[status] PUB sent=597182 tps=952 (pubs=10) | SUB recv=28633469 itps=85327.40 p99=20273.50ms conn=44191186943/11643468393.04,12224802318.01,28633469,1000,1000,1000,0,0,0,0,0,0,20180605477.61,20490698385.99,20503739860.28,20266984379.73,85329
+[status] PUB sent=607182 tps=965 (pubs=10) | SUB recv=28845900 itps=97589.14 p99=20503.50ms conn=44191186943/11714953860.42,12208016311.28,28845900,1000,1000,1000,0,0,0,0,0,0,21650472018.94,22028682459.23,22035946609.92,21788812242.41,97601
+[status] PUB sent=617182 tps=978 (pubs=10) | SUB recv=29172936 itps=106009.54 p99=20916.50ms conn=44191186943/11847003153.08,12202816581.89,29172936,1000,1000,1000,0,0,0,0,0,0,24143487309.04,24568130653.46,24573354044.68,24292971902.55,105994
+[status] PUB sent=632187 tps=997 (pubs=10) | SUB recv=29370637 itps=103902.94 p99=21150.40ms conn=44191186943/11939101886.74,12213090652.89,29370637,1000,1000,1000,0,0,0,0,0,0,25793356914.38,26160629528.71,26174337832.36,25888107142.09,103908
+[status] PUB sent=642182 tps=1010 (pubs=10) | SUB recv=29560981 itps=81603.38 p99=21409.10ms conn=44191186943/12035744009.11,12232788261.01,29560981,1000,1000,1000,0,0,0,0,0,0,27291178537.13,27565732851.32,27575724560.70,27366854029.72,81615
+[status] PUB sent=652182 tps=1022 (pubs=10) | SUB recv=29780900 itps=104502.88 p99=21629.20ms conn=44191186943/12158022195.90,12269787070.63,29780900,1000,1000,1000,0,0,0,0,0,0,28846215382.58,29289487089.53,29297434191.84,29033170724.74,104500
+[status] PUB sent=667182 tps=1041 (pubs=10) | SUB recv=30064454 itps=73191.26 p99=22003.20ms conn=44191186943/12331812319.56,12341157650.50,30064454,1000,1000,1000,0,0,0,0,0,0,31318598723.70,31597615705.04,31610773667.54,31411809402.82,73186
+[status] PUB sent=677187 tps=1053 (pubs=10) | SUB recv=30275900 itps=104492.38 p99=22317.10ms conn=44191186943/12473337931.50,12413283897.19,30275900,1000,1000,1000,0,0,0,0,0,0,32845373870.16,33283347508.89,33287939168.01,33030499452.21,104500
+[status] PUB sent=687182 tps=1065 (pubs=10) | SUB recv=30464798 itps=81810.20 p99=22516.90ms conn=44191186943/12608266251.13,12492169031.92,30464798,1000,1000,1000,0,0,0,0,0,0,34600908975.71,34910445955.22,34913646732.46,34666144397.57,81811
+[status] PUB sent=702182 tps=1084 (pubs=10) | SUB recv=30770854 itps=104469.54 p99=22915.70ms conn=44191186943/12843671333.83,12649997306.03,30770854,1000,1000,1000,0,0,0,0,0,0,36908736737.03,37347771233.77,37356605236.11,37088385330.77,104454
+[status] PUB sent=712187 tps=1096 (pubs=10) | SUB recv=30962641 itps=85044.06 p99=23140.20ms conn=44191186943/13001145750.73,12767625379.45,30962641,1000,1000,1000,0,0,0,0,0,0,38609425743.77,38915216018.51,38927541234.54,38679663654.35,85043
+[status] PUB sent=722182 tps=1108 (pubs=10) | SUB recv=31150400 itps=97646.80 p99=23389.20ms conn=44191186943/13155897939.19,12892554977.02,31150400,1000,1000,1000,0,0,0,0,0,0,37876822275.33,38206166416.96,38210064508.93,37990495835.48,97646
+[status] PUB sent=737182 tps=1125 (pubs=10) | SUB recv=31459891 itps=98975.47 p99=23666.80ms conn=44191186943/13380533937.34,13096633556.54,31459891,1000,1000,1000,0,0,0,0,0,0,31521796735.50,31906351416.38,31915675068.74,31654793366.38,98982
+[status] PUB sent=747182 tps=1137 (pubs=10) | SUB recv=31643192 itps=85438.32 p99=23794.20ms conn=44761612287/13476599497.12,13196422517.88,31643192,1000,1000,1000,0,0,0,0,0,0,28704276092.79,29029757107.21,29038358574.70,28796396095.38,85439
+[status] PUB sent=757185 tps=1149 (pubs=10) | SUB recv=31843400 itps=99105.99 p99=23911.40ms conn=46170898431/13586806534.78,13311105173.26,31843400,1000,1000,1000,0,0,0,0,0,0,29797694965.61,30221854971.31,30227213066.65,29975056873.07,99110
+[status] PUB sent=762592 tps=1152 (pubs=10) | SUB recv=32120194 itps=80045.85 p99=24000.70ms conn=48721035263/13663352303.52,13407824439.30,32120194,1000,1000,1000,0,0,0,0,0,0,18878555753.00,19211255854.49,19216677523.22,18991823550.79,80044
+[status] PUB sent=762992 tps=1149 (pubs=10) | SUB recv=32310900 itps=89763.03 p99=24015.50ms conn=50163875839/13700373439.57,13456822096.25,32310900,1000,1000,1000,0,0,0,0,0,0,22965461742.40,23335120418.73,23337865438.10,23106859364.81,89759
+[status] PUB sent=763392 tps=1146 (pubs=10) | SUB recv=32499090 itps=88599.64 p99=23999.80ms conn=51472498687/13718308679.72,13480050198.23,32499090,1000,1000,1000,0,0,0,0,0,0,15041205153.49,15411755157.21,15422580508.41,15143651103.07,88594
+[status] PUB sent=763992 tps=1142 (pubs=10) | SUB recv=32786152 itps=92006.65 p99=23877.70ms conn=51472498687/13677685244.59,13432800101.65,32786152,1000,1000,1000,0,0,0,0,0,0,10090333968.40,10400128377.93,10422335778.66,10107229041.15,92007
+[status] PUB sent=764393 tps=1139 (pubs=10) | SUB recv=32985496 itps=87754.58 p99=23787.00ms conn=51472498687/13662497406.58,13396948052.45,32985496,1000,1000,1000,0,0,0,0,0,0,11533249188.19,11808240693.80,11825065877.32,11534901886.63,87752
+[status] PUB sent=764792 tps=1136 (pubs=10) | SUB recv=33284894 itps=102142.07 p99=23660.00ms conn=51472498687/13647126798.81,13346548011.19,33284894,1000,1000,1000,0,0,0,0,0,0,12940525281.82,13341976280.88,13358470543.04,12749324426.10,102150
+[status] PUB sent=765392 tps=1132 (pubs=10) | SUB recv=33491816 itps=104856.38 p99=23562.70ms conn=51472498687/13649110801.38,13314324419.19,33491816,1000,1000,1000,0,0,0,0,0,0,15011253369.56,15166887998.90,15182473948.49,14996037703.06,104872
+[status] PUB sent=765792 tps=1130 (pubs=10) | SUB recv=33685403 itps=95162.32 p99=23476.50ms conn=51472498687/13653774955.76,13285408390.89,33685403,1000,1000,1000,0,0,0,0,0,0,14010979521.18,15823611192.15,15929445917.41,14008404093.91,95156
+[status] PUB sent=766392 tps=1125 (pubs=10) | SUB recv=33990028 itps=91890.43 p99=23325.10ms conn=51472498687/13664853833.76,13247130752.75,33990028,1000,1000,1000,0,0,0,0,0,0,14019679256.33,14842066879.58,14932551345.90,14012135926.40,91875
+[status] PUB sent=766792 tps=1123 (pubs=10) | SUB recv=34118841 itps=30041.08 p99=23284.90ms conn=51472498687/13654814435.60,13233725679.40,34118841,1000,1000,1000,0,0,0,0,0,0,918513492.52,2081234465.15,2197340445.50,944654846.28,30044
+[status] PUB sent=767192 tps=1120 (pubs=10) | SUB recv=34178840 itps=18999.66 p99=23261.90ms conn=51472498687/13630848057.66,13234483936.73,34178840,1000,1000,1000,0,0,0,0,0,0,2179525.55,3780042.18,4432896.29,2209613.86,19000
+[status] PUB sent=767792 tps=1116 (pubs=10) | SUB recv=34218837 itps=18996.96 p99=23251.80ms conn=51472498687/13614918091.94,13234963818.22,34218837,1000,1000,1000,0,0,0,0,0,0,2123859.26,3728021.07,3858281.79,2182705.34,18996
+[status] PUB sent=768192 tps=1113 (pubs=10) | SUB recv=34258840 itps=19003.98 p99=23243.40ms conn=51472498687/13599022902.90,13235423385.41,34258840,1000,1000,1000,0,0,0,0,0,0,2151723.40,3912230.12,4815393.38,2216130.00,19004
+[status] PUB sent=768792 tps=1109 (pubs=10) | SUB recv=34318840 itps=18998.59 p99=23225.20ms conn=51472498687/13575251276.15,13236075260.53,34318840,1000,1000,1000,0,0,0,0,0,0,2119263.29,3655060.15,3995935.57,2147166.76,18999
+[status] PUB sent=769192 tps=1107 (pubs=10) | SUB recv=34358839 itps=19004.12 p99=23213.00ms conn=51472498687/13559450148.74,13236484682.46,34358839,1000,1000,1000,0,0,0,0,0,0,2178709.35,3740235.81,4297189.54,2195467.81,19005
+[status] PUB sent=769793 tps=1103 (pubs=10) | SUB recv=34418836 itps=19000.83 p99=23195.10ms conn=51472498687/13535817828.98,13237061722.31,34418836,1000,1000,1000,0,0,0,0,0,0,2163285.09,3684410.28,3849459.83,2184429.17,19001
+[status] PUB sent=770193 tps=1100 (pubs=10) | SUB recv=34458838 itps=19001.26 p99=23176.90ms conn=51472498687/13520107091.63,13237422010.77,34458838,1000,1000,1000,0,0,0,0,0,0,2144336.22,3696694.83,4158439.23,2179565.78,19001
+[status] PUB sent=770592 tps=1098 (pubs=10) | SUB recv=34498838 itps=19001.33 p99=23166.80ms conn=51472498687/13504433583.37,13237762725.48,34498838,1000,1000,1000,0,0,0,0,0,0,2135841.61,3721153.78,3864226.00,2166702.46,19001
+[status] PUB sent=771192 tps=1094 (pubs=10) | SUB recv=34558841 itps=19006.01 p99=23142.00ms conn=51472498687/13480990249.96,13238237573.76,34558841,1000,1000,1000,0,0,0,0,0,0,2211343.03,3769717.42,4492290.61,2214437.37,19005
+[status] PUB sent=771592 tps=1091 (pubs=10) | SUB recv=34598838 itps=19000.72 p99=23127.10ms conn=51472498687/13465408441.27,13238530193.04,34598838,1000,1000,1000,0,0,0,0,0,0,2147675.95,3733911.18,4224095.09,2240151.63,19001
+[status] PUB sent=772192 tps=1088 (pubs=10) | SUB recv=34658835 itps=19001.81 p99=23100.50ms conn=51472498687/13442102553.57,13238933509.03,34658835,1000,1000,1000,0,0,0,0,0,0,2128737.27,3750512.98,3909727.78,2189489.75,19002
+[status] PUB sent=772592 tps=1085 (pubs=10) | SUB recv=34698839 itps=18999.45 p99=23086.70ms conn=51472498687/13426607763.03,13239178887.06,34698839,1000,1000,1000,0,0,0,0,0,0,2118203.01,3717968.86,3922345.44,2172710.48,18999
+[status] PUB sent=773192 tps=1081 (pubs=10) | SUB recv=34758836 itps=18996.94 p99=23053.80ms conn=51472498687/13403435944.17,13239511810.77,34758836,1000,1000,1000,0,0,0,0,0,0,2087561.50,3736013.17,3933527.93,2143370.50,18997
+[status] PUB sent=773592 tps=1079 (pubs=10) | SUB recv=34798839 itps=19001.11 p99=23045.70ms conn=51472498687/13388030463.92,13239710703.22,34798839,1000,1000,1000,0,0,0,0,0,0,2078301.95,3672038.10,3843450.16,2145383.58,19002
+[status] PUB sent=774192 tps=1075 (pubs=10) | SUB recv=34858844 itps=19005.29 p99=23025.50ms conn=51472498687/13364988338.01,13239974628.25,34858844,1000,1000,1000,0,0,0,0,0,0,2085823.75,3737655.68,4217317.41,2128079.07,19006
+
+=== Summary (fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty) ===
+Publishers: 10 | Subscribers: 1000
+=== Summary ===
+Publisher: sent=774192 total_tps=1075.26 connections=0 active=0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0
+Subscriber: recv=34883100 total_tps=48398.08 p50=3.25ms p95=10484.70ms p99=23021.00ms connections=51472498687 active=13355696458.30,13240060592.93,34883100,1000,1000,1000,0,0,0,0,0,0,2041004.55,3782982.70,3892760.95,2149120.25,3906
+Fanout run complete. Artifacts at artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite
+Stopping subscribers (896869 896931 897088 897227 897384 897552 897717 897894 898062 898231 898426 898574 898745 898915 899085 899239 899401 899568 899734 899900 900093 900254 900394 900579 900748 900908 901081 901240 901413 901581 901775 901930 902077 902241 902403 902569 902743 902908 903090 903256 903450 903605 903761 903929 904101 904251 904416 904589 904768 904928 905130 905273 905428 905586 905765 905948 906097 906262 906438 906591 906785 906945 907115 907275 907437 907595 907765 907930 908112 908279 908472 908623 908766 908933 909115 909298 909457 909606 909762 909926 910139 910294 910449 910609 910774 910950 911121 911281 911452 911620 911807 911966 912120 912281 912457 912620 912790 912954 913118 913284) and publishers (913613 913717 913861 914020 914194 914353 914523 914695 914876 915031)
+[20:37:20] [remote] ubuntu@192.168.0.251: cd /home/ubuntu && docker compose down
+ Container mosquitto Stopping 
+ Container mosquitto Stopped 
+ Container mosquitto Removing 
+ Container mosquitto Removed 
+ Network ubuntu_default Removing 
+ Network ubuntu_default Removed 
+[20:37:21] Wrote phase-rate summary: /home/cc/hpcc/mq-bench/results/ben/mqtt-prod/phase-rate-summary.md
+[20:37:21] Plotting bursty fan-out results to /home/cc/hpcc/mq-bench/results/ben/mqtt-prod/plots
+[plot] LaTeX mode enabled: PDF + PNG output, 300 DPI
+[plot] Latest-run filtering kept 12 of 12 summary rows
+[plot] Wrote plot points: /home/cc/hpcc/mq-bench/results/ben/mqtt-prod/raw_data/plot_points.csv
+[plot] Auto/selected plot tuning: bucket_seconds=1, throughput window=5, marker_every=13; latency window=3, marker_every=14; resource window=5, marker_every=8
+[plot] Wrote plots to /home/cc/hpcc/mq-bench/results/ben/mqtt-prod/plots
+[plot] Wrote gallery: /home/cc/hpcc/mq-bench/results/ben/mqtt-prod/plots/README.md
+[20:37:28] Done. Phase summary CSV: /home/cc/hpcc/mq-bench/results/ben/mqtt-prod/raw_data/summary_by_phase.csv

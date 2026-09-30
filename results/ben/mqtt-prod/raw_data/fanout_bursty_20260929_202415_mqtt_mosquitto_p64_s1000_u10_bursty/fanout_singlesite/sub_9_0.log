@@ -1,0 +1,32 @@
+mq-bench starting with run_id: auto
+Writing CSV output to: artifacts/fanout_bursty_20260929_202415_mqtt_mosquitto_p64_s1000_u10_bursty/fanout_singlesite/sub_9_0.csv
+2026-09-29T20:24:16.317444Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:24:16.317492Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:24:16.318306Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:24:22.984634Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:24:22.984731Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:24:22.985582Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:24:29.652120Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:24:29.652199Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:24:29.653189Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:24:36.319477Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:24:36.319517Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:24:36.320339Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:24:42.987485Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:24:42.987572Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:24:42.988490Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:24:49.654945Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:24:49.654983Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:24:49.655624Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:24:56.322736Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:24:56.322777Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:24:56.323842Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:25:02.989778Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:25:02.989842Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:25:02.990718Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:25:09.657765Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:25:09.657806Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:25:09.658651Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
+2026-09-29T20:25:16.325294Z  INFO mq_bench::roles::subscriber: Starting subscriber engine=Mqtt key=topic_9 endpoint=None crash_enabled=false
+2026-09-29T20:25:16.325339Z  INFO mq_bench::roles::subscriber: Connected via transport engine=Mqtt
+2026-09-29T20:25:16.326198Z  INFO mq_bench::roles::subscriber: Subscribed to key expression key=topic_9
