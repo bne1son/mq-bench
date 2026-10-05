@@ -16,6 +16,8 @@ START_BROKER=0
 SSH_TARGET=""
 REMOTE_DIR="~/mq-bench"
 REMOTE_CONFIG_PATH=""
+SUBSCRIBER_TARGET=""
+SUBSCRIBER_DIR="~/hpcc/mq-bench"
 PILOT=0
 DRY_RUN=0
 BINARY="${REPO_ROOT}/target/release/mq-bench"
@@ -45,6 +47,8 @@ Usage: $(basename "$0") [OPTIONS]
   --start-broker         Start a clean, isolated Mosquitto container per run
   --ssh-target USER@HOST Manage the broker over SSH instead of locally
   --remote-dir PATH      Remote repo directory (default: ${REMOTE_DIR})
+  --subscriber-target USER@HOST  Run the subscriber on a remote machine
+  --subscriber-dir PATH          Remote mq-bench repo directory (default: ${SUBSCRIBER_DIR})
   --binary PATH          mq-bench binary (default: target/release/mq-bench)
   --results-root PATH    Output root (default: results/mqtt_message_recovery_TIMESTAMP)
   --dry-run              Generate schedules/manifest and print commands only
@@ -65,6 +69,8 @@ while [[ $# -gt 0 ]]; do
     --binary) shift; BINARY="${1:?missing binary}" ;;
     --results-root) shift; RESULTS_ROOT="${1:?missing results root}" ;;
     --dry-run) DRY_RUN=1 ;;
+    --subscriber-target) shift; SUBSCRIBER_TARGET="${1:?missing subscriber target}" ;;
+    --subscriber-dir) shift; SUBSCRIBER_DIR="${1:?missing subscriber directory}" ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; usage >&2; exit 2 ;;
   esac
@@ -109,6 +115,13 @@ ssh_command() {
   ssh -o BatchMode=yes -o ConnectTimeout=10 "${SSH_TARGET}" "bash -c ${quoted_command}"
 }
 
+subscriber_ssh_command() {
+  local remote_command quoted_command
+  printf -v remote_command '%q ' "$@"
+  printf -v quoted_command '%q' "${remote_command}"
+  ssh -o ConnectTimeout=10 "${SUBSCRIBER_TARGET}" "bash -c ${quoted_command}"
+}
+
 stop_broker() {
   if [[ -n "${SSH_TARGET}" ]]; then
     ssh_command docker stop "${BROKER_CONTAINER}"
@@ -129,7 +142,7 @@ check_remote_broker() {
   local remote_config_sha local_config_sha
   ssh_command docker info --format '{{.ServerVersion}}' >/dev/null
   IFS=
-
+}
 command -v python3 >/dev/null
 command -v sha256sum >/dev/null
 if [[ ${DRY_RUN} -eq 0 && ! -x "${BINARY}" ]]; then
@@ -138,6 +151,12 @@ if [[ ${DRY_RUN} -eq 0 && ! -x "${BINARY}" ]]; then
   exit 2
 fi
 if [[ -n "${SSH_TARGET}" && ${DRY_RUN} -eq 0 ]]; then command -v ssh >/dev/null; fi
+if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
+  [[ "${SUBSCRIBER_TARGET}" == *@* && "${SUBSCRIBER_TARGET}" != -* && "${SUBSCRIBER_TARGET#*@}" != "" ]] || {
+    echo "--subscriber-target must be USER@HOST" >&2
+    exit 2
+  }
+fi
 if [[ ${START_BROKER} -eq 1 ]]; then
   if [[ -n "${SSH_TARGET}" ]]; then
     if [[ ${DRY_RUN} -eq 0 ]]; then check_remote_broker; fi
@@ -322,6 +341,40 @@ run_one() {
   local topic_prefix="bench/recovery/${run_id}"
   local controller_launch_ns
   controller_launch_ns="$(date +%s%N)"
+  local sub_pid
+local remote_art_dir="${SUBSCRIBER_DIR}/results/remote_subscriber/${run_id}"
+
+if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
+  # Prepare this run on the subscriber machine.
+  subscriber_ssh_command mkdir -p "${remote_art_dir}"
+
+  # Copy the availability schedule to the subscriber machine.
+  scp "${art_dir}/schedule.csv" \
+    "${SUBSCRIBER_TARGET}:${remote_art_dir}/schedule.csv"
+
+  local sub_cmd=(
+    "${SUBSCRIBER_DIR}/target/release/mq-bench"
+    --run-id "${run_id}" --snapshot-interval 1 mt-sub
+    --engine mqtt --connect "host=${HOST}" --connect "port=${PORT}"
+    --connect "client_id=sub-${run_id}" --connect "qos=${qos}"
+    --connect "clean_session=${clean_session}" --topic-prefix "${topic_prefix}"
+    --tenants 10 --regions 10 --services 10 --shards 1
+    --subscribers "${SUBSCRIBERS}" --mapping mdim --duration "${duration}"
+    --availability-schedule "${remote_art_dir}/schedule.csv"
+    --availability-start-delay "${WARMUP_SECS}" --final-drain-secs "${DRAIN_SECS}"
+    --subscriber-events "${remote_art_dir}/subscriber_events.csv"
+    --receive-trace "${remote_art_dir}/receive_trace.csv"
+    --availability-ready "${remote_art_dir}/availability_ready"
+    --csv "${remote_art_dir}/sub.csv" --enable-retry
+  )
+
+  printf 'REMOTE %q ' "${sub_cmd[@]}" >"${art_dir}/commands.txt"
+  printf '\n' >>"${art_dir}/commands.txt"
+
+  subscriber_ssh_command "${sub_cmd[@]}" >"${art_dir}/sub.log" 2>&1 &
+  sub_pid=$!
+
+else
   local sub_cmd=(
     "${BINARY}" --run-id "${run_id}" --snapshot-interval 1 mt-sub
     --engine mqtt --connect "host=${HOST}" --connect "port=${PORT}"
@@ -336,30 +389,52 @@ run_one() {
     --availability-ready "${art_dir}/availability_ready"
     --csv "${art_dir}/sub.csv" --enable-retry
   )
-  printf '%q ' "${sub_cmd[@]}" >"${art_dir}/commands.txt"; printf '\n' >>"${art_dir}/commands.txt"
-  "${sub_cmd[@]}" >"${art_dir}/sub.log" 2>&1 &
-  local sub_pid=$!
-  ACTIVE_PIDS+=("${sub_pid}")
 
+  printf '%q ' "${sub_cmd[@]}" >"${art_dir}/commands.txt"
+  printf '\n' >>"${art_dir}/commands.txt"
+
+  "${sub_cmd[@]}" >"${art_dir}/sub.log" 2>&1 &
+  sub_pid=$!
+fi
+
+ACTIVE_PIDS+=("${sub_pid}")
   local setup_deadline=$(( $(date +%s) + 120 ))
-  while [[ ! -s "${art_dir}/availability_ready" && $(date +%s) -lt ${setup_deadline} ]]; do
-    if ! kill -0 "${sub_pid}" 2>/dev/null; then
-      write_status "${art_dir}/status.json" failed "subscriber exited before readiness barrier"
-      update_manifest "${order}" failed "${run_id}"
-      abort_current_run
-      return 1
-    fi
-    sleep 0.1
-  done
-  if [[ ! -s "${art_dir}/availability_ready" ]]; then
-    write_status "${art_dir}/status.json" failed "subscriber readiness barrier timed out"
+local subscriber_start_ns=""
+
+while [[ $(date +%s) -lt ${setup_deadline} ]]; do
+  # The local process is either mt-sub itself or the SSH session running mt-sub.
+  if ! kill -0 "${sub_pid}" 2>/dev/null; then
+    write_status "${art_dir}/status.json" failed "subscriber exited before readiness barrier"
     update_manifest "${order}" failed "${run_id}"
     abort_current_run
     return 1
   fi
-  local subscriber_start_ns
-  subscriber_start_ns="$(tr -d '[:space:]' <"${art_dir}/availability_ready")"
 
+  if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
+    subscriber_start_ns="$(
+      subscriber_ssh_command cat "${remote_art_dir}/availability_ready" 2>/dev/null || true
+    )"
+
+    if [[ -n "${subscriber_start_ns}" ]]; then
+      subscriber_start_ns="$(printf '%s' "${subscriber_start_ns}" | tr -d '[:space:]')"
+      break
+    fi
+  else
+    if [[ -s "${art_dir}/availability_ready" ]]; then
+      subscriber_start_ns="$(tr -d '[:space:]' <"${art_dir}/availability_ready")"
+      break
+    fi
+  fi
+
+  sleep 0.1
+done
+
+if [[ -z "${subscriber_start_ns}" ]]; then
+  write_status "${art_dir}/status.json" failed "subscriber readiness barrier timed out"
+  update_manifest "${order}" failed "${run_id}"
+  abort_current_run
+  return 1
+fi
   local pub_pids=()
   local publisher
   for ((publisher=0; publisher<PUBLISHERS; publisher++)); do
@@ -428,10 +503,22 @@ PY
       fi
     done
     [[ ${early_failure} -ne 0 ]] && break
-    if [[ -f "${art_dir}/subscriber_events.csv" ]]; then
-      initial_count="$(awk -F, 'NR>1 && $5=="initial_connect" && $8=="ok"{n++} END{print n+0}' "${art_dir}/subscriber_events.csv")"
-      [[ "${initial_count}" -eq "${SUBSCRIBERS}" ]] && break
-    fi
+    if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
+  initial_count="$(
+    subscriber_ssh_command awk -F, \
+      'NR>1 && $5=="initial_connect" && $8=="ok"{n++} END{print n+0}' \
+      "${remote_art_dir}/subscriber_events.csv" 2>/dev/null || echo 0
+  )"
+else
+  if [[ -f "${art_dir}/subscriber_events.csv" ]]; then
+    initial_count="$(
+      awk -F, 'NR>1 && $5=="initial_connect" && $8=="ok"{n++} END{print n+0}' \
+        "${art_dir}/subscriber_events.csv"
+    )"
+  fi
+fi
+
+[[ "${initial_count}" -eq "${SUBSCRIBERS}" ]] && break
     sleep 1
   done
   if [[ "${initial_count}" -ne "${SUBSCRIBERS}" ]]; then
@@ -457,8 +544,21 @@ PY
   for pid in "${pub_pids[@]}"; do
     if wait "${pid}"; then pub_exit_codes+=(0); else pub_exit_codes+=("$?"); early_failure=1; fi
   done
-  local sub_exit_code=0
-  if wait "${sub_pid}"; then sub_exit_code=0; else sub_exit_code=$?; early_failure=1; fi
+local sub_exit_code=0
+if wait "${sub_pid}"; then
+  sub_exit_code=0
+else
+  sub_exit_code=$?
+  early_failure=1
+fi
+  if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
+  scp \
+    "${SUBSCRIBER_TARGET}:${remote_art_dir}/subscriber_events.csv" \
+    "${SUBSCRIBER_TARGET}:${remote_art_dir}/receive_trace.csv" \
+    "${SUBSCRIBER_TARGET}:${remote_art_dir}/sub.csv" \
+    "${SUBSCRIBER_TARGET}:${remote_art_dir}/availability_ready" \
+    "${art_dir}/"
+fi
   if [[ -n "${stats_pid}" ]]; then kill "${stats_pid}" 2>/dev/null || true; wait "${stats_pid}" 2>/dev/null || true; fi
   ACTIVE_PIDS=()
 
