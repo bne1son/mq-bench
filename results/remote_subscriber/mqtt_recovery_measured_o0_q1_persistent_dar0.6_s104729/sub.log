@@ -1,0 +1,3 @@
+mq-bench starting with run_id: mqtt_recovery_measured_o0_q1_persistent_dar0.6_s104729
+Writing CSV output to: /home/bne1son/hpcc/mq-bench/results/remote_subscriber/mqtt_recovery_measured_o0_q1_persistent_dar0.6_s104729/sub.csv
+2026-10-06T20:58:24.853561Z  INFO mq_bench::roles::multi_topic: [multi_topic_sub] starting engine=Mqtt prefix=bench/recovery/mqtt_recovery_measured_o0_q1_persistent_dar0.6_s104729 tenants=10 regions=10 services=10 shards=1 subs=1000 duration_secs=480

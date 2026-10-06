@@ -479,7 +479,18 @@ fi
     ACTIVE_PIDS+=("$!")
   done
 
-  SSH_TARGET_ENV="${SSH_TARGET}" REMOTE_DIR_ENV="${REMOTE_DIR}" python3 - "${art_dir}/metadata.json" <<PY
+local binary_native="${BINARY}"
+local broker_config_native="${REPO_ROOT}/config/mosquitto.conf"
+local repo_root_native="${REPO_ROOT}"
+local art_dir_native="${art_dir}"
+
+if command -v cygpath >/dev/null 2>&1; then
+  binary_native="$(cygpath -w "${BINARY}")"
+  broker_config_native="$(cygpath -w "${REPO_ROOT}/config/mosquitto.conf")"
+  art_dir_native="$(cygpath -w "${art_dir}")"
+  repo_root_native="$(cygpath -w "${REPO_ROOT}")"
+fi
+SSH_TARGET_ENV="${SSH_TARGET}" REMOTE_DIR_ENV="${REMOTE_DIR}" python3 - "${art_dir}/metadata.json" <<PY
 import hashlib, json, os, platform, subprocess
 topic_ranges = [{"publisher": i, "start": i * ${TOPICS_PER_PUBLISHER}, "count": ${TOPICS_PER_PUBLISHER}} for i in range(${PUBLISHERS})]
 metadata = {
@@ -494,19 +505,22 @@ metadata = {
   "payload_bytes": ${PAYLOAD}, "rate_per_topic": ${RATE_PER_TOPIC},
   "aggregate_rate": ${PUBLISHERS} * ${TOPICS_PER_PUBLISHER} * ${RATE_PER_TOPIC},
   "schedule_sha256": "${schedule_sha}", "topic_prefix": "${topic_prefix}",
-  "binary_sha256": hashlib.sha256(open("${BINARY}", "rb").read()).hexdigest(),
-  "broker_config_sha256": hashlib.sha256(open("${REPO_ROOT}/config/mosquitto.conf", "rb").read()).hexdigest(),
+  "binary_sha256": hashlib.sha256(open(r"${binary_native}", "rb").read()).hexdigest(),
+  "broker_config_sha256": hashlib.sha256(open(r"${broker_config_native}", "rb").read()).hexdigest(), 
   "broker_image": "eclipse-mosquitto:2",
   "broker_reset_by_orchestrator": bool(${START_BROKER}),
   "broker_management": "ssh" if os.environ["SSH_TARGET_ENV"] else "local" if ${START_BROKER} else "external",
   "ssh_target": os.environ["SSH_TARGET_ENV"],
   "remote_dir": os.environ["REMOTE_DIR_ENV"] if os.environ["SSH_TARGET_ENV"] else "",
-  "actual_commands": open("${art_dir}/commands.txt", encoding="utf-8").read().splitlines(),
+  "actual_commands": open(r"${art_dir_native}\commands.txt", encoding="utf-8").read().splitlines(),
   "host_details": {"platform": platform.platform(), "node": platform.node()},
 }
-try: metadata["git_commit"] = subprocess.check_output(["git", "-C", "${REPO_ROOT}", "rev-parse", "HEAD"], text=True).strip()
+try: metadata["git_commit"] = subprocess.check_output(
+    ["git", "-C", r"${repo_root_native}", "rev-parse", "HEAD"],
+    text=True
+).strip()
 except Exception: metadata["git_commit"] = ""
-with open("${art_dir}/metadata.json", "w", encoding="utf-8") as stream:
+with open(r"${art_dir_native}\metadata.json", "w", encoding="utf-8") as stream:
     json.dump(metadata, stream, indent=2, sort_keys=True); stream.write("\n")
 PY
 
