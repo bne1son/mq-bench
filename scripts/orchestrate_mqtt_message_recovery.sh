@@ -371,8 +371,21 @@ if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
   printf 'REMOTE %q ' "${sub_cmd[@]}" >"${art_dir}/commands.txt"
   printf '\n' >>"${art_dir}/commands.txt"
 
-  subscriber_ssh_command "${sub_cmd[@]}" >"${art_dir}/sub.log" 2>&1 &
-  sub_pid=$!
+# Start mt-sub in the background ON the subscriber machine.
+# The SSH connection itself stays in the foreground so password auth works.
+local remote_sub_log="${remote_art_dir}/sub.log"
+local remote_sub_pid="${remote_art_dir}/sub.pid"
+
+subscriber_ssh_command bash -c \
+  'log=$1
+   pidfile=$2
+   shift 2
+   rm -f "$pidfile"
+   nohup "$@" >"$log" 2>&1 < /dev/null &
+   printf "%s\n" "$!" >"$pidfile"' \
+  _ "${remote_sub_log}" "${remote_sub_pid}" "${sub_cmd[@]}"
+# We no longer have a local mt-sub/SSH PID to monitor.
+sub_pid=""
 
 else
   local sub_cmd=(
@@ -397,28 +410,37 @@ else
   sub_pid=$!
 fi
 
-ACTIVE_PIDS+=("${sub_pid}")
+if [[ -n "${sub_pid}" ]]; then
+  ACTIVE_PIDS+=("${sub_pid}")
+fi
   local setup_deadline=$(( $(date +%s) + 120 ))
 local subscriber_start_ns=""
 
 while [[ $(date +%s) -lt ${setup_deadline} ]]; do
-  # The local process is either mt-sub itself or the SSH session running mt-sub.
+  # For a local subscriber, verify that the process is still alive.
+  # For a local subscriber, verify that the process is still alive.
+if [[ -z "${SUBSCRIBER_TARGET}" ]]; then
   if ! kill -0 "${sub_pid}" 2>/dev/null; then
     write_status "${art_dir}/status.json" failed "subscriber exited before readiness barrier"
     update_manifest "${order}" failed "${run_id}"
     abort_current_run
     return 1
   fi
-
+fi
   if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
     subscriber_start_ns="$(
-      subscriber_ssh_command cat "${remote_art_dir}/availability_ready" 2>/dev/null || true
+      subscriber_ssh_command bash -c \
+        'for ((i=0; i<1200; i++)); do
+           if [[ -s "$1" ]]; then
+             tr -d "[:space:]" < "$1"
+             exit 0
+           fi
+           sleep 0.1
+         done
+         exit 1' \
+        _ "${remote_art_dir}/availability_ready" || true
     )"
-
-    if [[ -n "${subscriber_start_ns}" ]]; then
-      subscriber_start_ns="$(printf '%s' "${subscriber_start_ns}" | tr -d '[:space:]')"
-      break
-    fi
+    break
   else
     if [[ -s "${art_dir}/availability_ready" ]]; then
       subscriber_start_ns="$(tr -d '[:space:]' <"${art_dir}/availability_ready")"
@@ -435,6 +457,8 @@ if [[ -z "${subscriber_start_ns}" ]]; then
   abort_current_run
   return 1
 fi
+  local publish_start_epoch
+  publish_start_epoch="$(date +%s)"
   local pub_pids=()
   local publisher
   for ((publisher=0; publisher<PUBLISHERS; publisher++)); do
@@ -490,11 +514,12 @@ PY
   local deadline=$(( $(date +%s) + WARMUP_SECS ))
   local initial_count=0
   while [[ $(date +%s) -lt ${deadline} ]]; do
-    if ! kill -0 "${sub_pid}" 2>/dev/null; then
-      write_status "${art_dir}/status.json" failed "subscriber exited during warm-up"
-      early_failure=1
-      break
-    fi
+  if [[ -z "${SUBSCRIBER_TARGET}" ]]; then
+  if ! kill -0 "${sub_pid}" 2>/dev/null; then
+    early_failure=1
+    break
+  fi
+fi
     for pid in "${pub_pids[@]}"; do
       if ! kill -0 "${pid}" 2>/dev/null; then
         write_status "${art_dir}/status.json" failed "publisher exited during warm-up"
@@ -503,12 +528,23 @@ PY
       fi
     done
     [[ ${early_failure} -ne 0 ]] && break
-    if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
+if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
   initial_count="$(
-    subscriber_ssh_command awk -F, \
-      'NR>1 && $5=="initial_connect" && $8=="ok"{n++} END{print n+0}' \
-      "${remote_art_dir}/subscriber_events.csv" 2>/dev/null || echo 0
+    subscriber_ssh_command bash -c \
+      'for ((i=0; i<60; i++)); do
+         if [[ -f "$1" ]]; then
+           count=$(awk -F, '"'"'NR>1 && $5=="initial_connect" && $8=="ok"{n++} END{print n+0}'"'"' "$1")
+           if [[ "$count" -eq "$2" ]]; then
+             echo "$count"
+             exit 0
+           fi
+         fi
+         sleep 1
+       done
+       echo "${count:-0}"' \
+      _ "${remote_art_dir}/subscriber_events.csv" "${SUBSCRIBERS}"
   )"
+  break
 else
   if [[ -f "${art_dir}/subscriber_events.csv" ]]; then
     initial_count="$(
@@ -524,32 +560,61 @@ fi
   if [[ "${initial_count}" -ne "${SUBSCRIBERS}" ]]; then
     write_status "${art_dir}/status.json" invalid "only ${initial_count}/${SUBSCRIBERS} subscribers confirmed during warm-up"
   fi
+local expected_publish_end=$(( publish_start_epoch + publishing_duration - 5 ))
 
-  local expected_publish_end=$(( ${subscriber_start_ns:0:10} + publishing_duration - 5 ))
-  while [[ ${early_failure} -eq 0 && $(date +%s) -lt ${expected_publish_end} ]]; do
+while [[ ${early_failure} -eq 0 && $(date +%s) -lt ${expected_publish_end} ]]; do
+  if [[ -z "${SUBSCRIBER_TARGET}" ]]; then
     if ! kill -0 "${sub_pid}" 2>/dev/null; then
       early_failure=1
       break
     fi
-    for pid in "${pub_pids[@]}"; do
-      if ! kill -0 "${pid}" 2>/dev/null; then early_failure=1; break 2; fi
-    done
-    sleep 1
-  done
-  if [[ ${early_failure} -ne 0 ]]; then
-    for pid in "${pub_pids[@]}" "${sub_pid}"; do kill "${pid}" 2>/dev/null || true; done
   fi
-  local pub_exit_codes=()
+
+  for pid in "${pub_pids[@]}"; do
+    if ! kill -0 "${pid}" 2>/dev/null; then
+      early_failure=1
+      break 2
+    fi
+  done
+
+  sleep 1
+done
+
+if [[ ${early_failure} -ne 0 ]]; then
+  for pid in "${pub_pids[@]}"; do
+    kill "${pid}" 2>/dev/null || true
+  done
+
+  if [[ -z "${SUBSCRIBER_TARGET}" && -n "${sub_pid}" ]]; then
+    kill "${sub_pid}" 2>/dev/null || true
+  fi
+fi
+
+local pub_exit_codes=()
   local pid
   for pid in "${pub_pids[@]}"; do
     if wait "${pid}"; then pub_exit_codes+=(0); else pub_exit_codes+=("$?"); early_failure=1; fi
   done
 local sub_exit_code=0
-if wait "${sub_pid}"; then
-  sub_exit_code=0
+
+if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
+  # Wait on the Pi for the remote subscriber process to finish.
+  sub_exit_code="$(
+    subscriber_ssh_command bash -c \
+      'pid=$(cat "$1")
+       while kill -0 "$pid" 2>/dev/null; do
+         sleep 1
+       done
+       echo 0' \
+      _ "${remote_sub_pid}"
+  )"
 else
-  sub_exit_code=$?
-  early_failure=1
+  if wait "${sub_pid}"; then
+    sub_exit_code=0
+  else
+    sub_exit_code=$?
+    early_failure=1
+  fi
 fi
   if [[ -n "${SUBSCRIBER_TARGET}" ]]; then
   scp \
